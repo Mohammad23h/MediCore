@@ -1,32 +1,37 @@
-# استخدام PHP 8.2 مع Apache
-FROM php:8.2-apache
+# ---- Base Image ----
+FROM php:8.1-fpm
 
-# تثبيت مكتبات يحتاجها Laravel
-RUN docker-php-ext-install pdo pdo_mysql
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    libzip-dev \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# تثبيت Composer
+# Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# نسخ ملفات المشروع
-COPY . /var/www/html
+# Set working directory
+WORKDIR /var/www
 
-# ضبط مجلد العمل
-WORKDIR /var/www/html
+# Copy project files
+COPY . .
 
-# تثبيت مكتبات Laravel
+# Install dependencies
 RUN composer install --optimize-autoloader --no-dev
 
-# تهيئة Laravel
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# Generate Laravel cache
+RUN php artisan config:clear && \
+    php artisan route:clear && \
+    php artisan view:clear
 
-# إعداد مجلدات Laravel للكتابة
-RUN chmod -R 775 storage bootstrap/cache
+# Expose port
+EXPOSE 8000
 
-# تعيين Apache ليخدم من مجلد public
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
-    && sed -i 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-
-EXPOSE 80
-CMD ["apache2-foreground"]
+# Start Laravel with PHP's built-in server
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
