@@ -1,10 +1,8 @@
 #!/bin/sh
 set -e
 
-host="$DB_HOST"
-port="$DB_PORT"
-user="$DB_USERNAME"
-password="$DB_PASSWORD"
+HOST="${DB_HOST:-mysql}"
+PORT="${DB_PORT:-3306}"
 
 echo "⏳ Waiting for database at $host:$port..."
 until mysqladmin ping -h"$host" -P"$port" -u"$user" -p"$password" --silent; do
