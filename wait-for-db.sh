@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # استخدم القيم من ENV أو اعطي قيم افتراضية
-HOST="${DB_HOST:-mysql}"
+HOST="${DB_HOST:-mysql.railway.internal}"
 PORT="${DB_PORT:-3306}"
 
 echo "⏳ Waiting for database at $HOST:$PORT..."
