@@ -3,9 +3,11 @@ set -e
 
 host="$DB_HOST"
 port="$DB_PORT"
+user="$DB_USERNAME"
+password="$DB_PASSWORD"
 
 echo "⏳ Waiting for database at $host:$port..."
-while ! nc -z $host $port; do
+until mysqladmin ping -h"$host" -P"$port" -u"$user" -p"$password" --silent; do
   sleep 2
 done
 
