@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     libzip-dev \
+    netcat-openbsd \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Install Composer
@@ -22,16 +23,15 @@ WORKDIR /var/www
 # Copy project files
 COPY . .
 
-# Install dependencies
+# Install dependencies (without dev)
 RUN composer install --optimize-autoloader --no-dev
 
-# Generate Laravel cache
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
+# Copy wait script
+COPY wait-for-db.sh /var/www/wait-for-db.sh
+RUN chmod +x /var/www/wait-for-db.sh
 
 # Expose port
 EXPOSE 8000
 
-# Start Laravel with PHP's built-in server
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# Start with wait-for-db script
+CMD ["/var/www/wait-for-db.sh"]
