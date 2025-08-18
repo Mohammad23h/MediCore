@@ -34,4 +34,4 @@ RUN php artisan config:clear && \
 EXPOSE 8000
 
 # Start Laravel with PHP's built-in server
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
