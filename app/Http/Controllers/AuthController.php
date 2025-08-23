@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Password;
 class AuthController extends Controller
 {
     /*
@@ -83,8 +83,20 @@ class AuthController extends Controller
             'role' => $user->role,
         ]);
     }
+/*
+    public function forgetPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
 
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
 
+        return $status === Password::RESET_LINK_SENT
+            ? response()->json(['message' => __($status)])
+            : response()->json(['error' => __($status)], 400);
+    }
+*/
     public function getAllUsers(Request $request)
     {
         $users = User::all();

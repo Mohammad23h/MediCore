@@ -24,6 +24,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\LaboratoryController;
 use App\Http\Controllers\AssistantController;
+use Illuminate\Support\Facades\Password;
 //use App\Http\Controllers\UserController;
 
 
@@ -38,12 +39,39 @@ use App\Http\Controllers\AssistantController;
 |
 */
 
+Route::get('/reset-password/{token}', function ($token) {
+    return "هنا المفروض تعرض صفحة reset password بـ Frontend مع التوكن: $token";
+})->name('password.reset');
+
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::post('users/login', [AuthController::class,'login']);
 Route::post('users/register', [AuthController::class,'register']);
 Route::post('users', [AuthController::class,'getAllUsers']);
+//Route::post('users/forget', [AuthController::class,'ForgetPassword']);
+/*Route::post('/forgot-password', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return $status === Password::RESET_LINK_SENT
+        ? response()->json(['message' => __($status)])
+        : response()->json(['error' => __($status)], 400);
+});*/
+Route::post('/forgot-password', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    Mail::raw('مرحبا', function ($message) use ($request) {
+        $message->to($request->email)
+                ->subject('اختبار الإيميل');
+    });
+
+    return response()->json(['message' => 'تم إرسال البريد بنجاح']);
+});
 Route::middleware('auth:api')->get('/user-role', [AuthController::class, 'getRole']);
 Route::put('users/role', [AuthController::class,'giveRole']);
 

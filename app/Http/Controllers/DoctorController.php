@@ -35,7 +35,7 @@ class DoctorController extends Controller
     public function update(Request $request, $id) {
         $doctor = Doctor::findOrFail($id);
         if($doctor->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Access Denied'],403);
+            return response()->json(['message' => 'Access Denied '],403);
         }
 /*
         $validated = $request->validate([

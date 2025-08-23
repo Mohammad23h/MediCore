@@ -9,7 +9,15 @@ class Laboratory extends Model
 {
     use HasFactory;
 
-
+    protected $fillable = [
+        'logo_url',
+        'center_id',
+        'start_day',
+        'end_day',
+        'start_time',
+        'end_time',
+        'clinic_id'
+    ];
 
 
 
