@@ -49,7 +49,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::post('users/login', [AuthController::class,'login']);
 Route::post('users/register', [AuthController::class,'register']);
-Route::post('users', [AuthController::class,'getAllUsers']);
+Route::get('users', [AuthController::class,'getAllUsers']);
 //Route::post('users/forget', [AuthController::class,'ForgetPassword']);
 /*Route::post('/forgot-password', function (Request $request) {
     $request->validate(['email' => 'required|email']);
