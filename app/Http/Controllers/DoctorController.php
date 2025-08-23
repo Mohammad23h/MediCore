@@ -24,8 +24,9 @@ class DoctorController extends Controller
             'start_time' => 'date_format:H:i',
             'end_time' => 'date_format:H:i',
             'clinic_id' => 'required|exists:clinics,id',
-            'user_id' => 'required|exists:users,id'
+            //'user_id' => 'required|exists:users,id'
         ]);
+        $validated['user_id'] = auth()->id();
         return response()->json(Doctor::create($validated), 201);
     }
     public function show($id) {

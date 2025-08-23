@@ -153,7 +153,7 @@ Route::controller(PatientController::class)->prefix('patients')->group(function 
 
 Route::controller(DoctorController::class)->prefix('doctors')->group(function () {
     Route::get('/', 'index');
-    Route::post('/', 'store')->middleware(['auth:api', 'center']);
+    Route::post('/', 'store')->middleware(['auth:api', 'doctor']);
     Route::get('{id}', 'show');
     Route::put('{id}', 'update')->middleware(['auth:api', 'doctor']);
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
