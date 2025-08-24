@@ -33,6 +33,11 @@ class DoctorController extends Controller
         $doctor = Doctor::With('clinic')->findOrFail($id)->makeHidden('user_id');
         return response()->json($doctor); 
     }
+
+    public function showMyProfile() {
+        $doctor = Doctor::With('clinic')->firstWhere('user_id',auth()->id())->makeHidden('user_id');
+        return response()->json($doctor); 
+    }
     public function update(Request $request, $id) {
         $doctor = Doctor::findOrFail($id);
         if($doctor->user_id !== auth()->id()) {

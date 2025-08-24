@@ -49,8 +49,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::post('users/login', [AuthController::class,'login']);
 Route::post('users/register', [AuthController::class,'register']);
+Route::post('users/verify-email', [AuthController::class,'verifyEmail']);
 Route::get('users', [AuthController::class,'getAllUsers']);
-//Route::post('users/forget', [AuthController::class,'ForgetPassword']);
+Route::get('users/myUser', [AuthController::class,'getMyUser']);
+Route::post('users/forget', [AuthController::class,'forgetPassword']);
+Route::post('users/verify-reset-code', [AuthController::class,'verifyResetCode']);
+Route::post('users/reset-password', [AuthController::class,'resetPassword']);
 /*Route::post('/forgot-password', function (Request $request) {
     $request->validate(['email' => 'required|email']);
 
@@ -146,7 +150,7 @@ Route::controller(PatientController::class)->prefix('patients')->group(function 
     Route::get('/', 'index');//->middleware(['auth:api', 'inRoles:doctor,center,assistant']);
     Route::post('/', 'store')->middleware(['auth:api', 'inRoles:patient']);
     Route::get('{id}', 'show')->middleware(['auth:api', 'inRoles:doctor,center,assistant']);
-    Route::get('MyProfile', 'myProfile')->middleware(['auth:api', 'inRoles:patient']);
+    Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'inRoles:patient']);
     Route::put('{id}', 'update')->middleware(['auth:api', 'inRoles:patient']);
     Route::delete('{id}', 'destroy');
 });
@@ -155,6 +159,7 @@ Route::controller(DoctorController::class)->prefix('doctors')->group(function ()
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware(['auth:api', 'doctor']);
     Route::get('{id}', 'show');
+    Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'doctor']);
     Route::put('{id}', 'update')->middleware(['auth:api', 'doctor']);
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
     Route::delete('{id}', 'destroyMyProfile')->middleware(['auth:api', 'doctor']);
@@ -172,6 +177,7 @@ Route::controller(CenterController::class)->prefix('centers')->group(function ()
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware(['auth:api', 'center']);
     Route::get('{id}', 'show');
+    Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'center']);
     Route::put('{id}', 'update')->middleware(['auth:api', 'center']);
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
 });

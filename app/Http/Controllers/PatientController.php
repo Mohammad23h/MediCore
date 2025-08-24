@@ -17,15 +17,15 @@ class PatientController extends Controller
             'image_url'=> 'url|nullable',
             "blood_type" => 'string|nullable'
         ]);
-        $validated['user_id'] = auth()->id();
+        $validated['user-id'] = auth()->id();
         return response()->json(Patient::create($validated), 201);
     }
     public function show($id) { 
         return response()->json(Patient::with(['appointments'])->findOrFail($id)); 
     }
 
-    public function myProfile() { 
-        return response()->json(Patient::with(['appointments'])->firstWhere('user_id','==',auth()->id())); 
+    public function showMyProfile() { 
+        return response()->json(Patient::with(['appointments'])->firstWhere('user_id',auth()->id())); 
     }
     public function update(Request $request, $id) {
         $patient = Patient::findOrFail($id);

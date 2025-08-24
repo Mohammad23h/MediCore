@@ -17,8 +17,8 @@ class CenterController extends Controller
         $validated = $request->validate([
             'name' => 'required|string',
             'logo_url' => 'string|url',
-            'start_day' => 'string|date',
-            'end_day' => 'string|date',
+            'start_day' => 'string',
+            'end_day' => 'string',
             //'user_id' => 'required',
             'start_time' => 'date_format:H:i',
             'end_time' => 'date_format:H:i',
@@ -36,6 +36,11 @@ class CenterController extends Controller
         $center->assistants->makeHidden('user_id');
         $center->makeHidden('user_id');    
         return response()->json($center , 200);
+    }
+
+    public function showMyProfile() {
+        $center = Center::With('clinic')->firstWhere('user_id',auth()->id());
+        return response()->json($center); 
     }
 
     public function update(Request $request, $id)
