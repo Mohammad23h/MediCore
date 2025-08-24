@@ -34,6 +34,12 @@ class AuthController extends Controller
     }
         */
 
+    public function getMyUser(Request $request){
+        return response()->json([
+            'user' => auth()->user(),
+        ]);
+    }
+
     
     public function login(Request $request)
     {
@@ -57,8 +63,35 @@ class AuthController extends Controller
         
     }
 
+
+
+
     
     public function register(Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|between:2,100',
+            'email' => 'required|email|string|max:100|unique:users',
+            'password' => 'required|string|min:6',
+            'role' => 'string'
+        ]);
+        if ($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
+        $user = User::create(array_merge(
+            $validator->validated() ,
+             ['password' => bcrypt($request->get('password'))],
+        ));
+        return response()->json([
+            'message' => 'Your account has registered sussessful',
+            'User' => $user,
+        ]);
+    }
+
+
+
+
+    
+    public function registerWithVerify(Request $request){
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
             'email' => 'required|email|string|max:100|unique:users',
