@@ -149,9 +149,9 @@ Route::controller(FeedbackController::class)->prefix('feedbacks')->group(functio
 
 Route::controller(PatientController::class)->prefix('patients')->group(function () {
     Route::get('/', 'index');//->middleware(['auth:api', 'inRoles:doctor,center,assistant']);
+    Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'inRoles:patient']);
     Route::post('/', 'store')->middleware(['auth:api', 'inRoles:patient']);
     Route::get('{id}', 'show')->middleware(['auth:api', 'inRoles:doctor,center,assistant']);
-    Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'inRoles:patient']);
     Route::put('{id}', 'update')->middleware(['auth:api', 'inRoles:patient']);
     Route::delete('{id}', 'destroy');
 });
@@ -159,11 +159,12 @@ Route::controller(PatientController::class)->prefix('patients')->group(function 
 Route::controller(DoctorController::class)->prefix('doctors')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware(['auth:api', 'doctor']);
-    Route::get('{id}', 'show');
     Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'doctor']);
+    Route::get('{id}', 'show');
     Route::put('{id}', 'update')->middleware(['auth:api', 'doctor']);
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
     Route::delete('{id}', 'destroyMyProfile')->middleware(['auth:api', 'doctor']);
+    
 });
 
 Route::controller(AppointmentController::class)->prefix('appointments')->group(function () {
@@ -177,8 +178,8 @@ Route::controller(AppointmentController::class)->prefix('appointments')->group(f
 Route::controller(CenterController::class)->prefix('centers')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware(['auth:api', 'center']);
-    Route::get('{id}', 'show');
     Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'center']);
+    Route::get('{id}', 'show');
     Route::put('{id}', 'update')->middleware(['auth:api', 'center']);
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
 });
