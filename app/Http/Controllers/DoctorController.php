@@ -83,7 +83,7 @@ class DoctorController extends Controller
         $doctor = Doctor::findOrFail($request->doctor_id);
         $doctor->clinic_id = $request->clinic_id;
         $doctor->save();
-        return response()->json(['message' => 'Deleted']);
+        return response()->json(['message' => 'Succeed']);
     }
 
     public function destroyMyProfile($id) {
