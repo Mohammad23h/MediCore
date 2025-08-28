@@ -15,7 +15,8 @@ class Patient extends Model
     'phone' ,
     'gender',
     'date_of_birth' ,
-    'blood_type'
+    'blood_type',
+    'registered_at'
     ];
 
 
