@@ -23,7 +23,7 @@ class DoctorController extends Controller
             'end_day' => 'string',
             'start_time' => 'date_format:H:i',
             'end_time' => 'date_format:H:i',
-            'clinic_id' => 'required|exists:clinics,id',
+            //'clinic_id' => 'required|exists:clinics,id',
             'specialty' => 'required|string',
             //'user_id' => 'required|exists:users,id'
         ]);
@@ -36,7 +36,6 @@ class DoctorController extends Controller
     }
 
     public function showMyProfile() {
-        
         $doctor = Doctor::With('clinic')->firstWhere('user_id',auth()->id())->makeHidden('user_id');
         return response()->json($doctor); 
     }

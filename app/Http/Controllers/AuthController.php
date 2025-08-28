@@ -39,7 +39,6 @@ class AuthController extends Controller
             'user' => auth()->user(),
         ]);
     }
-
     
     public function login(Request $request)
     {
@@ -63,10 +62,6 @@ class AuthController extends Controller
         
     }
 
-
-
-
-    
     public function register(Request $request){
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
@@ -88,7 +83,10 @@ class AuthController extends Controller
     }
 
 
-
+    public function destroy($id){
+        User::destroy($id);
+        return response()->json(['message' => 'Deleted']);
+    }
 
     
     public function registerWithVerify(Request $request){
