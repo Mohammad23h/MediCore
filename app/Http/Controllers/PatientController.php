@@ -17,7 +17,7 @@ class PatientController extends Controller
             'image_url'=> 'url|nullable',
             "blood_type" => 'string|nullable'
         ]);
-        $validated['user-id'] = auth()->id();
+        $validated['user_id'] = auth()->id();
         return response()->json(Patient::create($validated), 201);
     }
     public function show($id) { 
