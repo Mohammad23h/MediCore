@@ -74,6 +74,18 @@ class DoctorController extends Controller
         Doctor::destroy($id);
         return response()->json(['message' => 'Deleted']);
     }
+
+    public function addToClinic(Request $request) {
+        $request->validate([
+            'doctor_id' => 'required|exists:doctors,id',
+            'clinic_id' => 'required|exists:clinics,id',
+        ]);
+        $doctor = Doctor::findOrFail($request->doctor_id);
+        $doctor->clinic_id = $request->clinic_id;
+        $doctor->save();
+        return response()->json(['message' => 'Deleted']);
+    }
+
     public function destroyMyProfile($id) {
         $doctor = Doctor::findOrFail($id);
         if($doctor->user_id !== auth()->id()) {
