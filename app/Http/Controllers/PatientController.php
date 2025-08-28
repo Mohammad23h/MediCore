@@ -18,7 +18,7 @@ class PatientController extends Controller
             "blood_type" => 'string|nullable'
         ]);
         $validated['user_id'] = auth()->id();
-        $validated['registered_at'] = now()->timestamp;
+        $validated['registered_at'] = now();
         return response()->json(Patient::create($validated), 201);
     }
     public function show($id) { 
