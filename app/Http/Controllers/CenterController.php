@@ -39,7 +39,7 @@ class CenterController extends Controller
     }
 
     public function showMyProfile() {
-        $center = Center::With('clinic')->firstWhere('user_id',auth()->id());
+        $center = Center::With('clinics')->firstWhere('user_id',auth()->id());
         return response()->json($center); 
     }
 
