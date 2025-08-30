@@ -9,7 +9,14 @@ class MedicalSupply extends Model
 {
     use HasFactory;
 
-
+    protected $fillable = [
+            'name' ,
+            'category' ,
+            'quantity_in_stock',
+            'clinic_id' ,
+            'reorder_level',
+            'center_id'
+    ];
 
     public function center()
     {

@@ -16,8 +16,10 @@ class MedicalSupplyController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string',
-            'quantity' => 'required|integer|min:0',
+            'category' => 'required|string',
+            'quantity_in_stock' => 'required|integer|min:0',
             'clinic_id' => 'nullable|exists:clinics,id',
+            'reorder_level' => 'required|integer|min:0',
             'center_id' => 'nullable|exists:centers,id',
         ]);
 
@@ -26,7 +28,7 @@ class MedicalSupplyController extends Controller
 
     public function show($id)
     {
-        return response()->json(MedicalSupply::with(['clinic', 'center'])->findOrFail($id));
+        return response()->json(MedicalSupply::with(['center'])->findOrFail($id));
     }
 
     public function update(Request $request, $id)

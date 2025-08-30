@@ -3,22 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Doctor;
+use App\Traits\UploadImageTrait;
 use Illuminate\Http\Request;
 
 class DoctorController extends Controller
 {
+    use UploadImageTrait;
     /**
      * Display a listing of the resource.
      */
     public function index() {
         return response()->json(Doctor::all()->makeHidden('user_id')); 
     }
+    public function upload(Request $request) {
+        return $this->UploadImage($request,'doctors');
+    }
 
     public function store(Request $request) {
 
         $validated = $request->validate([
             'name' => 'required',
-            'image_url' => 'string|url',
+            //'image_url' => 'string|url',
             'start_day' => 'string',
             'end_day' => 'string',
             'start_time' => 'date_format:H:i',
@@ -28,6 +33,7 @@ class DoctorController extends Controller
             //'user_id' => 'required|exists:users,id'
         ]);
         $validated['user_id'] = auth()->id();
+        $validated['image_url'] = $this->UploadImage($request,'doctors');
         return response()->json(Doctor::create($validated), 201);
     }
     public function show($id) {

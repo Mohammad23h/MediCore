@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Password;
 Route::get('/reset-password/{token}', function ($token) {
     return "هنا المفروض تعرض صفحة reset password بـ Frontend مع التوكن: $token";
 })->name('password.reset');
+Route::post('doctors/upload', [DoctorController::class, 'upload']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -159,6 +160,7 @@ Route::controller(PatientController::class)->prefix('patients')->group(function 
 Route::controller(DoctorController::class)->prefix('doctors')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware(['auth:api', 'doctor']);
+    Route::post('upload', 'upload');
     Route::put('add-to-clinic', 'addToClinic')->middleware(['auth:api', 'center']);
     Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'doctor']);
     Route::get('{id}', 'show');
