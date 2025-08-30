@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        /*
         Schema::table('medical_supplies', function (Blueprint $table) {
             $table->dropColumn('registered_at');
             $table->dropColumn('registered_at');
             $table->dropColumn('registered_at');
         });
+        */
     }
 
     /**
