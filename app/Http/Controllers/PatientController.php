@@ -18,6 +18,7 @@ class PatientController extends Controller
             "blood_type" => 'string|nullable'
         ]);
         $validated['user_id'] = auth()->id();
+        $validated['image_url'] = $this->UploadImage($request,'doctors');
         $validated['registered_at'] = now();
         return response()->json(Patient::create($validated), 201);
     }

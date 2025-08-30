@@ -16,7 +16,7 @@ class CenterController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string',
-            'logo_url' => 'string|url',
+            //'logo_url' => 'string|url',
             'start_day' => 'string',
             'end_day' => 'string',
             //'user_id' => 'required',
@@ -25,6 +25,7 @@ class CenterController extends Controller
             'location' => 'required|string'
         ]);
         $validated['user_id'] = auth()->id();
+        $validated['logo_url'] = $this->UploadImage($request,'Centers');
 
         return response()->json(Center::create($validated), 201);
     }
