@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Clinic;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
 
 class ClinicController extends Controller
@@ -31,6 +32,11 @@ class ClinicController extends Controller
     public function show($id)
     {
         return response()->json(Clinic::with(['doctors'])->findOrFail(id: $id));
+    }
+
+    public function getDoctors($id)
+    {
+        return response()->json(Doctor::where('clinic_id',$id)->get());
     }
 
     public function update(Request $request, $id)
