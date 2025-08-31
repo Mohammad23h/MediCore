@@ -80,6 +80,7 @@ Route::post('/forgot-password', function (Request $request) {
 });
 Route::middleware('auth:api')->get('/user-role', [AuthController::class, 'getRole']);
 Route::put('users/role', [AuthController::class,'giveRole']);
+Route::put('users/block/{id}', [AuthController::class,'block']);
 
 
 Route::controller(LabTechnicianController::class)->prefix('lab-technicians')->group(function () {

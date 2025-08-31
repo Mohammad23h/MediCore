@@ -166,6 +166,18 @@ class AuthController extends Controller
         ]);
     }
 
+    public function block($id){
+        /*
+        if(auth()->user()->role != 'admin'){
+            return response()->json(['message' => 'unauthorize'] , 403);
+        }
+            */
+        $user = User::findOrFail($id);
+        $user->blocked = true;
+        $user->save();
+        return response()->json(['blocked_user' => $user], 200);
+    }
+
     public function forgetPassword(Request $request)
     {
         /*
