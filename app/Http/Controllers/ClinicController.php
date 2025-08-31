@@ -21,10 +21,10 @@ class ClinicController extends Controller
             'end_day' => 'string',
             'start_time' => 'date_format:H:i',
             'end_time' => 'date_format:H:i',
-            'center_id' => 'required|exists:centers,id',
+            //'center_id' => 'required|exists:centers,id',
             'clinic_type' => 'required|string',
         ]);
-
+        $validated['center_id'] = 1 ;
         return response()->json(Clinic::create($validated), 201);
     }
 

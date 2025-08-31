@@ -100,4 +100,18 @@ class DoctorController extends Controller
         Doctor::destroy($id);
         return response()->json(['message' => 'Deleted']);
     }
+
+    public function block($id){
+        /*
+        if(auth()->user()->role != 'admin'){
+            return response()->json(['message' => 'unauthorize'] , 403);
+        }
+            */
+        $doctor = Doctor::with('user')->findOrFail($id);
+        $user = $doctor->user;
+        $user->blocked = true;
+        $user->save();
+        return response()->json(['blocked_doctor' => $doctor ], 200);
+    }
+
 }
