@@ -12,8 +12,9 @@ class Service extends Model
 
 
 
-    public function clinic()
+    public function clinics()
     {
-        return $this->belongsTo(Clinic::class);
+        return $this->belongsToMany(Clinic::class, 'clinic_service')
+                    ->withTimestamps();
     }
 }

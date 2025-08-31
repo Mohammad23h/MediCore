@@ -39,7 +39,8 @@ protected $fillable = [
 
     public function services()
     {
-        return $this->hasMany(Service::class);
+        return $this->belongsToMany(Service::class, 'clinic_service')
+                    ->withTimestamps();
     }
 
     public function reviews()
