@@ -194,6 +194,7 @@ Route::controller(ClinicController::class)->prefix('clinics')->group(function ()
     Route::post('/', 'store')->middleware(['auth:api', 'center']);
     Route::get('{id}', 'show');
     Route::get('{id}/doctors', 'getDoctors');
+    Route::post('{id}/addService/{serviceId}', 'addService');
     Route::put('{id}', 'update')->middleware(['auth:api', 'center']);
     Route::delete('{id}', 'destroy');
 });

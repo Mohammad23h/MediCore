@@ -16,8 +16,8 @@ class ServiceController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string',
-            'clinic_id' => 'required|exists:clinics,id',
-            'price' => 'required|numeric',
+            'description' => 'required',
+            'price' => 'required|numeric'
         ]);
 
         return response()->json(Service::create($validated), 201);
@@ -25,7 +25,7 @@ class ServiceController extends Controller
 
     public function show($id)
     {
-        return response()->json(Service::with('clinic')->findOrFail($id));
+        return response()->json(Service::with('clinics')->findOrFail($id));
     }
 
     public function update(Request $request, $id)

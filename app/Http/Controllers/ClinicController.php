@@ -49,6 +49,14 @@ class ClinicController extends Controller
         return response()->json($clinic);
     }
 
+    public function addService($id, $serviceId)
+    {
+        $clinic = Clinic::findOrFail($id);
+        $clinic->services()->attach($serviceId);
+        $clinic = Clinic::with('services')->findOrFail($id);
+        return response()->json($clinic);
+    }
+
     public function destroy($id)
     {
         Clinic::destroy($id);
