@@ -14,12 +14,14 @@ class AssistantController extends Controller
 
     public function store(Request $request)
     {
+      
         $validated = $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:assistants,email',
             'phone' => 'nullable|string',
             'center_id' => 'required|exists:centers,id',
         ]);
+        $validated['user_id'] = auth()->id();
 
         return response()->json(Assistant::create($validated), 201);
     }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\LabTest;
 use Illuminate\Http\Request;
+use App\Models\Assistant;
+use App\Models\Patient;
 
 class LabTestController extends Controller
 {
@@ -16,12 +18,20 @@ class LabTestController extends Controller
     {
         $validated = $request->validate([
             'patient_id' => 'required|exists:patients,id',
-            'laboratory_id' => 'required|exists:laboratories,id',
+            'lab_id' => 'required|exists:laboratories,id',
             'test_type' => 'required|string',
             'result' => 'nullable|string',
-            'date' => 'required|date',
+            'test_date' => 'required|date',
         ]);
 
+          $assistant = Assistant::where('user_id', auth()->id())->first();
+
+        if (!$assistant) {
+            return response()->json(['message' => 'Assistant not found.'], 404);
+        }
+        $validated['assistant_id'] = $assistant->id;
+
+        
         return response()->json(LabTest::create($validated), 201);
     }
 
@@ -37,9 +47,29 @@ class LabTestController extends Controller
         return response()->json($labTest);
     }
 
+    
     public function destroy($id)
     {
         LabTest::destroy($id);
         return response()->json(['message' => 'Deleted']);
     }
+
+    public function searchByPatientName(Request $request) {
+
+          $name = $request->input('name');
+          
+          $patient = Patient::where('name', 'LIKE', "%{$name}%")->first();
+          if (!$patient) {
+              return response()->json(['message' => 'Patient not found'], 404);
+          }
+          
+          $labTests = LabTest::where('patient_id', $patient->id)->get();
+          if ($labTests->isEmpty()) {
+              return response()->json(['message' => 'No lab tests found for this patient'], 404);
+          }
+
+          return response()->json($labTests);
+    }
+
+    
 }

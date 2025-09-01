@@ -10,6 +10,7 @@ class MedicalRecord extends Model
     use HasFactory;
 
 
+
     protected $fillable = [
         'patient_id',
         'assistant_id',

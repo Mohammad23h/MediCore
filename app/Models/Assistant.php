@@ -10,9 +10,18 @@ class Assistant extends Model
     use HasFactory;
 
 
-    protected $hidden = [
-        'user_id'
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'user_id',
+        'center_id',
     ];
+
+
+    // protected $hidden = [
+    //     'user_id'
+    // ];
 
     public function user()
     {

@@ -103,23 +103,19 @@ class AuthController extends Controller
             $validator->validated() ,
              ['password' => bcrypt($request->get('password'))],
         ));
-
-
-        // توليد كود عشوائي مكون من 6 أرقام
         $code = mt_rand(100000, 999999);
 
-        // حفظ الكود وتاريخ الانتهاء (مثلاً 10 دقائق من الآن)
         $user->verification_code = $code;
         $user->verification_code_expires_at = Carbon::now()->addMinutes(10);
         $user->save();
         
         // إرسال البريد
-        Mail::raw("كود التفعيل الخاص بك هو: $code", function ($message) use ($user) {
+        Mail::raw("Your verification code is: $code", function ($message) use ($user) {
             $message->to($user->email)
-                    ->subject('كود تفعيل البريد الإلكتروني');
+                    ->subject('verification code');
         });
 
-        return response()->json(['message' => 'تم إرسال كود التفعيل بنجاح' ]);
+        return response()->json(['message' => 'Verifivation code has been sent' ]);
 
 /*
         return response()->json([
@@ -137,18 +133,17 @@ class AuthController extends Controller
     $user = User::where('email', $request->email)->first();
 
     if (! $user) {
-        return response()->json(['error' => 'المستخدم غير موجود'], 404);
+        return response()->json(['error' => 'user is not existed'], 404);
     }
 
     if ($user->verification_code !== $request->code) {
-        return response()->json(['error' => 'الكود غير صحيح'], 400);
+        return response()->json(['error' => 'error in code'], 400);
     }
 
     if (Carbon::now()->greaterThan($user->verification_code_expires_at)) {
-        return response()->json(['error' => 'انتهت صلاحية الكود'], 400);
+        return response()->json(['error' => 'your verify code had expired'], 400);
     }
 
-    // تفعيل الحساب
     $user->email_verified_at = Carbon::now();
     $user->verification_code = null;
     $user->verification_code_expires_at = null;
@@ -183,38 +178,35 @@ class AuthController extends Controller
         /*
         $request->validate(['email' => 'required|email']);
 
-        Mail::raw('مرحبا', function ($message) use ($request) {
+        Mail::raw('Hello', function ($message) use ($request) {
         $message->to($request->email)
-                ->subject('اختبار الإيميل');
+                ->subject('Hello');
                 
         
     });
 
-    return response()->json(['message' => 'تم إرسال البريد بنجاح']);
+    return response()->json(['message' => 'sent successfully']);
     */
         $request->validate(['email' => 'required|email']);
 
         $user = User::where('email', $request->email)->first();
 
         if (! $user) {
-            return response()->json(['error' => 'المستخدم غير موجود'], 404);
+            return response()->json(['error' => ' not found the user'], 404);
         }
 
-        // توليد كود من 6 أرقام
         $resetCode = rand(100000, 999999);
 
-        // تخزين الكود ووقت الانتهاء (15 دقيقة من الآن)
         $user->reset_code = $resetCode;
         $user->reset_code_expires_at = Carbon::now()->addMinutes(15);
         $user->save();
 
-        // إرسال الإيميل
-        Mail::raw("رمز استعادة كلمة المرور الخاص بك هو: {$resetCode}", function ($message) use ($user) {
+        Mail::raw("Your reset code is :{$resetCode}", function ($message) use ($user) {
         $message->to($user->email)
-                ->subject('رمز استعادة كلمة المرور');
+                ->subject('reset code');
         });
 
-        return response()->json(['message' => 'تم إرسال رمز الاستعادة إلى بريدك الإلكتروني']);
+        return response()->json(['message' => 'reset code has been sent successfuly']);
     }
 
     public function verifyResetCode(Request $request){
@@ -226,24 +218,24 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (! $user) {
-            return response()->json(['error' => 'المستخدم غير موجود'], 404);
+            return response()->json(['error' => 'not found the user'], 404);
         }
 
         if ($user->reset_code !== $request->code) {
-            return response()->json(['error' => 'الكود غير صحيح'], 400);
+            return response()->json(['error' => 'error in your code'], 400);
         }
 
         if (Carbon::now()->greaterThan($user->reset_code_expires_at)) {
-            return response()->json(['error' => 'انتهت صلاحية الكود'], 400);
+            return response()->json(['error' => 'code is expired'], 400);
         }
 
-        return response()->json(['message' => 'تم التحقق من الكود بنجاح']);
+        return response()->json(['message' => 'Succeeded']);
     }
 
     public function resetPassword(Request $request){
         $request->validate([
-        'email'        => 'required|email',
-        'code'         => 'required|string',
+        'email' => 'required|email',
+        'code' => 'required|string',
         'new_password' => 'required|string|min:8',
     ]);
 
@@ -254,23 +246,21 @@ class AuthController extends Controller
     }
 
     if ($user->reset_code !== $request->code) {
-        return response()->json(['error' => 'الكود غير صحيح'], 400);
+        return response()->json(['error' => 'user not found'], 400);
     }
 
     if (Carbon::now()->greaterThan($user->reset_code_expires_at)) {
-        return response()->json(['error' => 'انتهت صلاحية الكود'], 400);
+        return response()->json(['error' => 'code has expired'], 400);
     }
 
-    // تحديث كلمة المرور
     $user->password = Hash::make($request->new_password);
 
-    // مسح الكود بعد الاستخدام
     $user->reset_code = null;
     $user->reset_code_expires_at = null;
 
     $user->save();
 
-    return response()->json(['message' => 'تمت إعادة تعيين كلمة المرور بنجاح']);
+    return response()->json(['message' => 'succeeded']);
     }
     public function getAllUsers(Request $request)
     {

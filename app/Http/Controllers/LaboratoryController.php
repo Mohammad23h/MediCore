@@ -21,7 +21,7 @@ class LaboratoryController extends Controller
             'end_day'=> 'nullable|string',
             'start_time'=> 'nullable|string',
             'end_time'=> 'nullable|string',
-            'clinic_id'=> 'required|exists:clinics,id',
+            //'clinic_id'=> 'required|exists:clinics,id',
             'center_id' => 'required|exists:centers,id',
         ]);
 

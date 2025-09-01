@@ -10,6 +10,7 @@ class Laboratory extends Model
     use HasFactory;
 
     protected $fillable = [
+        'name',
         'logo_url',
         'center_id',
         'start_day',

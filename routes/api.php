@@ -199,20 +199,23 @@ Route::controller(ClinicController::class)->prefix('clinics')->group(function ()
     Route::delete('{id}', 'destroy');
 });
 
+
 Route::controller(MedicalRecordController::class)->prefix('medical-records')->group(function () {
-    Route::get('/', 'index');
-    Route::post('/', 'store');
-    Route::get('{id}', 'show');
-    Route::put('{id}', 'update');
-    Route::delete('{id}', 'destroy');
+    Route::get('/', 'index')->middleware(['auth:api', 'inRoles:doctor,assistant,center']);
+    Route::post('/', 'store')->middleware(['auth:api', 'inRoles:assistant']);
+    Route::get('/search', 'searchByPatientName')->middleware(['auth:api', 'inRoles:assistant,doctor']);
+    Route::get('{id}', 'show')->middleware(['auth:api', 'inRoles:assistant']);
+    Route::put('{id}', 'update')->middleware(['auth:api', 'inRoles:assistant']);
+    Route::delete('{id}', 'destroy')->middleware(['auth:api', 'inRoles:assistant']);
 });
 
-Route::controller(LabTestController::class)->prefix('lab-tests')->group(function () {
-    Route::get('/', 'index');
-    Route::post('/', 'store');
-    Route::get('{id}', 'show');
+Route::controller(LabTestController::class)->prefix('lab-tests')->group(function () {    
+    Route::get('/', 'index')->middleware(['auth:api', 'inRoles:assistant,doctor']);
+    Route::post('/', 'store')->middleware(['auth:api', 'inRoles:assistant,doctor']);
+    Route::get('/search', 'searchByPatientName')->middleware(['auth:api', 'inRoles:assistant,doctor']);
+    Route::get('{id}', 'show')->middleware(['auth:api', 'inRoles:assistant']);
     Route::put('{id}', 'update');
-    Route::delete('{id}', 'destroy');
+    Route::delete('{id}', 'destroy')->middleware(['auth:api', 'inRoles:assistant']);   
 });
 
 Route::controller(ReportController::class)->prefix('reports')->group(function () {
@@ -239,17 +242,19 @@ Route::controller(ServiceController::class)->prefix('services')->group(function 
     Route::delete('{id}', 'destroy');
 });
 
+
 Route::controller(LaboratoryController::class)->prefix('laboratories')->group(function () {
-    Route::get('/', 'index');
+    Route::get('/', 'index')->middleware(['auth:api', 'center']);;
     Route::post('/', 'store')->middleware(['auth:api', 'center']);
-    Route::get('{id}', 'show');
+    Route::get('{id}', 'show')->middleware(['auth:api', 'center']);;
     Route::put('{id}', 'update')->middleware(['auth:api', 'center']);
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
 });
 
+
 Route::controller(AssistantController::class)->prefix('assistants')->group(function () {
-    Route::get('/', 'index');
-    Route::post('/', 'store');
+    Route::get('/', 'index')->middleware(['auth:api', 'inRoles:doctor,assistant']);
+    Route::post('/', 'store')->middleware(['auth:api', 'inRoles:assistant']);
     Route::get('{id}', 'show');
     Route::put('{id}', 'update');
     Route::delete('{id}', 'destroy');
