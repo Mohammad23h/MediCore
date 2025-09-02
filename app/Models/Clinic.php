@@ -24,6 +24,11 @@ protected $fillable = [
         'services' => 'array',
     ];
 
+    // accessor لإرجاع [] بدل null
+    public function getServicesAttribute($value)
+    {
+        return $value ? json_decode($value, true) : [];
+    }
 
 
 
