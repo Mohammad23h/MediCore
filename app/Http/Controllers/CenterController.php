@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Center;
+use App\Traits\UploadImageTrait;
 use Illuminate\Http\Request;
 
 class CenterController extends Controller
 {
+    use UploadImageTrait;
     public function index()
     {
         return response()->json(Center::all()->makeHidden("user_id"));
