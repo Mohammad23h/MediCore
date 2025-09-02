@@ -14,6 +14,16 @@ class AppointmentController extends Controller
          return response()->json(Appointment::with(['doctor','patient'])->all()); 
     }
 
+    public function GetAllInDate(Request $request) {
+         return response()->json(Appointment::with(['doctor','patient'])->where('date' , $request->date)); 
+    }
+    public function getClinicAppointmentInDate(Request $request,$id) {
+         return response()->json(Appointment::with(['doctor','patient'])->where('clinic_id' , $id)->where('date' , $request->date)->get()); 
+    }
+    public function getDoctorAppointmentInDate(Request $request,$id) {
+         return response()->json(Appointment::with(['doctor','patient'])->where('doctor_id' , $id)->where('date' , $request->date)->get()); 
+    }
+
     public function getClinicAppointment($id) {
          return response()->json(Appointment::with(['doctor','patient'])->where('clinic_id', '==' , $id)->where('status' ,'!==', 'done')); 
     }
@@ -26,9 +36,17 @@ class AppointmentController extends Controller
             'time' => 'required',
             'status' => 'required'
         ]);
-        return response()->json(Appointment::create($validated), 201);
+        $preAppointment = Appointment::where('date', $request->date)->where('time' , $request->time)->firstWhere('clinic_id',$request->clinic_id);
+        if(!$preAppointment){
+            return response()->json(Appointment::create($validated), 201);
+        }
+        return response()->json(['message' => 'this time had already selected'] , 400);
     }
-    public function show($id) { return response()->json(Appointment::findOrFail($id)); }
+
+    public function show($id) {
+       return response()->json(Appointment::findOrFail($id)); 
+    }
+
     public function update(Request $request, $id) {
         $appointment = Appointment::findOrFail($id);
         $Success = $appointment->update($request->all());

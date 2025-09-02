@@ -176,6 +176,7 @@ Route::controller(AppointmentController::class)->prefix('appointments')->group(f
     Route::get('/', 'index');
     Route::post('/', 'store');
     Route::get('{id}', 'show');
+    Route::get('getByDate/{id}', 'getDoctorAppointmentInDate');
     Route::put('{id}', 'update');
     Route::delete('{id}', 'destroy');
 });
