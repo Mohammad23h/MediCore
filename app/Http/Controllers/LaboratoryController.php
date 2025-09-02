@@ -17,8 +17,8 @@ class LaboratoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string',
             'logo_url'=>'nullable|string|url',
-            'start_day'=> 'nullable|string',
-            'end_day'=> 'nullable|string',
+            'start_day'=> 'required|string',
+            'end_day'=> 'required|string',
             'start_time'=> 'nullable|string',
             'end_time'=> 'nullable|string',
             //'clinic_id'=> 'required|exists:clinics,id',

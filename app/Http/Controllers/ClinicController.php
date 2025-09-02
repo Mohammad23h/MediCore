@@ -49,12 +49,36 @@ class ClinicController extends Controller
         return response()->json($clinic);
     }
 
-    public function addService($id, $serviceId)
+    public function addServices(Request $request, $clinicId)
     {
+        /*
         $clinic = Clinic::findOrFail($id);
         $clinic->services()->attach($serviceId);
         $clinic = Clinic::with('services')->findOrFail($id);
         return response()->json($clinic);
+        */
+
+        $clinic = Clinic::findOrFail($clinicId);
+        $validated = $request->validate([
+            'services' => 'required|array',
+            'services.*' => 'string',
+        ]);
+
+        // الخدمات الحالية
+        $currentServices = $clinic->services ?? [];
+
+        // دمج الخدمات الجديدة مع القديمة (بدون تكرار)
+        $updatedServices = array_unique(array_merge($currentServices, $validated['services']));
+
+        // تحديث العيادة
+        $clinic->services = $updatedServices;
+        $clinic->save();
+
+        return response()->json([
+            'message' => 'Services added successfully',
+            'services' => $clinic->services,
+        ], 200);
+
     }
 
     public function destroy($id)

@@ -17,7 +17,12 @@ protected $fillable = [
     'end_time',
     'center_id',
     'clinic_type',
+    'services'
 ];
+
+    protected $casts = [
+        'services' => 'array',
+    ];
 
 
 
@@ -36,13 +41,13 @@ protected $fillable = [
     {
         return $this->hasMany(Appointment::class);
     }
-
+/*
     public function services()
     {
         return $this->belongsToMany(Service::class, 'clinic_service')
                     ->withTimestamps();
     }
-
+*/
     public function reviews()
     {
         return $this->hasMany(Review::class);

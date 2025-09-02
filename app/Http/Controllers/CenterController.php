@@ -34,7 +34,7 @@ class CenterController extends Controller
 
     public function show($id)
     {
-        $center = Center::with(['clinics.services', 'assistants'])->findOrFail($id);
+        $center = Center::with(['clinics', 'assistants'])->findOrFail($id);
         //$center->clinics->makeHidden('user_id');
         //$center->assistants->makeHidden('user_id');
         //$center->makeHidden('user_id');    
