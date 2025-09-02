@@ -36,6 +36,39 @@ class DoctorController extends Controller
         $validated['image_url'] = $this->UploadImage($request,'doctors');
         return response()->json(Doctor::create($validated), 201);
     }
+
+        public function addServices(Request $request, $clinicId)
+    {
+        /*
+        $clinic = Clinic::findOrFail($id);
+        $clinic->services()->attach($serviceId);
+        $clinic = Clinic::with('services')->findOrFail($id);
+        return response()->json($clinic);
+        */
+
+        $doctor = Doctor::findOrFail($clinicId);
+        $validated = $request->validate([
+            'services' => 'required|array',
+            'services.*' => 'string',
+        ]);
+
+        // الخدمات الحالية
+        $currentServices = $doctor->services ?? [];
+
+        // دمج الخدمات الجديدة مع القديمة (بدون تكرار)
+        $updatedServices = array_unique(array_merge($currentServices, $validated['services']));
+
+        // تحديث العيادة
+        $doctor->services = $updatedServices;
+        $doctor->save();
+
+        return response()->json([
+            'message' => 'Services added successfully',
+            'services' => $doctor->services,
+        ], 200);
+
+    }
+
     public function show($id) {
         $doctor = Doctor::With('clinic')->findOrFail($id)->makeHidden('user_id');
         return response()->json($doctor); 
@@ -113,5 +146,8 @@ class DoctorController extends Controller
         $user->save();
         return response()->json(['blocked_doctor' => $doctor ], 200);
     }
+
+
+
 
 }

@@ -19,8 +19,21 @@ class Doctor extends Model
     'start_time',
     'end_time',
     'clinic_id',
-    'specialty'
+    'specialty',
+    'services'
     ];
+
+    
+    protected $casts = [
+        'services' => 'array',
+    ];
+
+    // accessor لإرجاع [] بدل null
+    public function getServicesAttribute($value)
+    {
+        return $value ? json_decode($value, true) : [];
+    }
+
 
     protected $hidden = [
         'user_id'
