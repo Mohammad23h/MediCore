@@ -16,8 +16,8 @@ class ServiceController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string',
-            'description' => 'required',
-            'price' => 'required|numeric'
+            'description' => 'required'
+            //'price' => 'required|numeric'
         ]);
 
         return response()->json(Service::create($validated), 201);
