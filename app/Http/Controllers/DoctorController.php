@@ -75,7 +75,7 @@ class DoctorController extends Controller
     }
 
     public function showMyProfile() {
-        $doctor = Doctor::With('clinic')->firstWhere('user_id',auth()->id())->makeHidden('user_id');
+        $doctor = Doctor::With('clinic')->firstWhere('user_id',auth()->id());
         return response()->json($doctor); 
     }
     public function update(Request $request, $id) {

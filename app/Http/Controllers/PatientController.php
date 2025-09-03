@@ -29,17 +29,16 @@ class PatientController extends Controller
     public function showMyProfile() { 
         return response()->json(Patient::with(['appointments'])->firstWhere('user_id',auth()->id())); 
     }
-    public function update(Request $request, $id) {
-        $patient = Patient::findOrFail($id);
-        if($patient->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Access Denied'],403);
-        }
+    public function update(Request $request, $userId) {
+        $patient = Patient::firstWhere('user_id', $userId);
         $Success = $patient->update($request->all());
         if(!$Success){
             return response()->json(['message' => 'Failed'],400);
         }
         return response()->json($patient , 200);
     }
+
+
     public function destroy($id) {
         Patient::destroy($id);
         return response()->json(['message' => 'Deleted']);
