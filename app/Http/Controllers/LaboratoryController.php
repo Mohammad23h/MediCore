@@ -50,4 +50,20 @@ class LaboratoryController extends Controller
         Laboratory::destroy($id);
         return response()->json(['message' => 'Deleted']);
     }
+
+
+    public function addService(Request $request, $laboratoryId)
+{
+    $request->validate([
+        'services' => 'required|array',
+        'services.*' => 'exists:services,id'
+    ]);
+
+    $lab = Laboratory::findOrFail($laboratoryId);
+    $lab->services()->attach($request->services);
+
+    return response()->json([
+        'laboratory' => $lab->load('services')
+    ], 200);
+}
 }

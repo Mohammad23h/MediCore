@@ -36,4 +36,10 @@ class Laboratory extends Model
     {
         return $this->hasMany(LabTechnician::class, 'lab_id');
     }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'laboratory_service')
+                    ->withTimestamps();
+    }
 }

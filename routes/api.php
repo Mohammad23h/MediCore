@@ -166,7 +166,7 @@ Route::controller(DoctorController::class)->prefix('doctors')->group(function ()
     Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'doctor']);
     Route::get('{id}', 'show');
     Route::put('{id}', 'update')->middleware(['auth:api', 'doctor']);
-    Route::post('{doctorId}/addService', 'addService');
+    Route::post('{doctorId}/addServices', 'addService');
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
     Route::put('block/{id}', 'block');//->middleware(['auth:api', 'doctor']);
     
@@ -251,6 +251,7 @@ Route::controller(ServiceController::class)->prefix('services')->group(function 
 Route::controller(LaboratoryController::class)->prefix('laboratories')->group(function () {
     Route::get('/', 'index')->middleware(['auth:api', 'center']);
     Route::post('/', 'store')->middleware(['auth:api', 'center']);
+    Route::post('{laboratoryId}/addServices', 'addService');
     Route::get('{id}', 'show')->middleware(['auth:api', 'center']);
     Route::put('{id}', 'update')->middleware(['auth:api', 'center']);
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
