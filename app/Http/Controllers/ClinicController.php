@@ -56,7 +56,7 @@ class ClinicController extends Controller
             'services.*' => 'exists:services,id'
         ]);
 
-        $clinic = Doctor::findOrFail($clinicId);
+        $clinic = Clinic::findOrFail($clinicId);
         $clinic->services()->attach($request->services);
 
         return response()->json([
