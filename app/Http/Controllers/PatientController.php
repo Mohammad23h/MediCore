@@ -14,11 +14,11 @@ class PatientController extends Controller
             'phone' => 'nullable|numeric',
             'gender' => 'nullable',
             'date_of_birth' => 'nullable|date',
-            'image_url'=> 'url|nullable',
+            //'image_url'=> 'url|nullable',
             "blood_type" => 'string|nullable'
         ]);
         $validated['user_id'] = auth()->id();
-        $validated['image_url'] = $this->UploadImage($request,'doctors');
+        //$validated['image_url'] = $this->UploadImage($request,'doctors');
         $validated['registered_at'] = now();
         return response()->json(Patient::create($validated), 201);
     }
