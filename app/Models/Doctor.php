@@ -19,11 +19,11 @@ class Doctor extends Model
     'start_time',
     'end_time',
     'clinic_id',
-    'specialty',
-    'services'
+    'specialty'
+    //'services'
     ];
 
-    
+    /*
     protected $casts = [
         'services' => 'array',
     ];
@@ -34,7 +34,7 @@ class Doctor extends Model
         return $value ? json_decode($value, true) : [];
     }
 
-
+*/
     protected $hidden = [
         'user_id'
     ];
@@ -59,5 +59,11 @@ class Doctor extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'doctor_service')
+                    ->withTimestamps();
     }
 }

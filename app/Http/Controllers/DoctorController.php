@@ -37,36 +37,20 @@ class DoctorController extends Controller
         return response()->json(Doctor::create($validated), 201);
     }
 
-        public function addServices(Request $request, $clinicId)
+        public function addService(Request $request, $doctorId)
     {
-        /*
-        $clinic = Clinic::findOrFail($id);
-        $clinic->services()->attach($serviceId);
-        $clinic = Clinic::with('services')->findOrFail($id);
-        return response()->json($clinic);
-        */
-
-        $doctor = Doctor::findOrFail($clinicId);
-        $validated = $request->validate([
+        $request->validate([
             'services' => 'required|array',
-            'services.*' => 'string',
+            'services.*' => 'exists:services,id'
         ]);
-
-        // الخدمات الحالية
-        $currentServices = $doctor->services ?? [];
-
-        // دمج الخدمات الجديدة مع القديمة (بدون تكرار)
-        $updatedServices = array_unique(array_merge($currentServices, $validated['services']));
-
-        // تحديث العيادة
-        $doctor->services = $updatedServices;
-        $doctor->save();
-
+    
+        $doctor = Doctor::findOrFail($doctorId);
+        
+        $doctor->services()->attach($request->services);
+    
         return response()->json([
-            'message' => 'Services added successfully',
-            'services' => $doctor->services,
+            'doctor' => $doctor->load('services')
         ], 200);
-
     }
 
     public function show($id) {
@@ -76,6 +60,9 @@ class DoctorController extends Controller
 
     public function showMyProfile() {
         $doctor = Doctor::With('clinic')->firstWhere('user_id',auth()->id());
+        if (!$doctor) {
+            return response()->json(['message' => 'Doctor profile not found'], 404);
+        }
         return response()->json($doctor); 
     }
     public function update(Request $request, $id) {
