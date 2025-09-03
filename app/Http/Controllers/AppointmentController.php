@@ -17,9 +17,19 @@ class AppointmentController extends Controller
     public function GetAllInDate(Request $request) {
          return response()->json(Appointment::with(['doctor','patient'])->where('date' , $request->date)); 
     }
+
+    public function getAllClinicAppointment(Request $request,$id) {
+         return response()->json(Appointment::with(['doctor','patient'])->where('clinic_id' , $id)->get()); 
+    }
+
+    public function getAllDoctorAppointment(Request $request,$id) {
+         return response()->json(Appointment::with(['doctor','patient'])->where('clinic_id' , $id)->get()); 
+    }
+
     public function getClinicAppointmentInDate(Request $request,$id) {
          return response()->json(Appointment::with(['doctor','patient'])->where('clinic_id' , $id)->where('date' , $request->date)->get()); 
     }
+
     public function getDoctorAppointmentInDate(Request $request,$id) {
          return response()->json(Appointment::with(['doctor','patient'])->where('doctor_id' , $id)->where('date' , $request->date)->get()); 
     }
