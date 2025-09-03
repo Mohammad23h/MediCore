@@ -179,7 +179,7 @@ Route::controller(AppointmentController::class)->prefix('appointments')->group(f
     Route::post('/', 'store');
     Route::get('getByDate/{id}', 'getDoctorAppointmentInDate');
     Route::get('getByClinic/{id}', 'getAllClinicAppointment');
-    Route::get('getBydoctor/{id}', 'getAllDoctorAppointment');
+    Route::get('getByDoctor/{id}', 'getAllDoctorAppointment');
     Route::get('{id}', 'show');
     Route::put('{id}', 'update');
     Route::delete('{id}', 'destroy');

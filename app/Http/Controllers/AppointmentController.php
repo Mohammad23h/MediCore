@@ -11,7 +11,7 @@ class AppointmentController extends Controller
      * Display a listing of the resource.
      */
     public function index() {
-         return response()->json(Appointment::with(['doctor','patient'])->all()); 
+         return response()->json(Appointment::with(['doctor','patient'])->get()); 
     }
 
     public function GetAllInDate(Request $request) {
@@ -23,7 +23,7 @@ class AppointmentController extends Controller
     }
 
     public function getAllDoctorAppointment(Request $request,$id) {
-         return response()->json(Appointment::with(['doctor','patient'])->where('clinic_id' , $id)->get()); 
+         return response()->json(Appointment::with(['doctor','patient'])->where('doctor_id' , $id)->get()); 
     }
 
     public function getClinicAppointmentInDate(Request $request,$id) {
