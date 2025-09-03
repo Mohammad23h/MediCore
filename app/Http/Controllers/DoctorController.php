@@ -45,7 +45,7 @@ class DoctorController extends Controller
         ]);
     
         $doctor = Doctor::findOrFail($doctorId);
-        
+
         $doctor->services()->attach($request->services);
     
         return response()->json([
@@ -54,7 +54,7 @@ class DoctorController extends Controller
     }
 
     public function show($id) {
-        $doctor = Doctor::With('clinic')->findOrFail($id)->makeHidden('user_id');
+        $doctor = Doctor::With('clinic' , 'services')->findOrFail($id)->makeHidden('user_id');
         return response()->json($doctor); 
     }
 

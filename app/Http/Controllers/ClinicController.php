@@ -31,7 +31,7 @@ class ClinicController extends Controller
 
     public function show($id)
     {
-        return response()->json(Clinic::with(['doctors'])->findOrFail(id: $id));
+        return response()->json(Clinic::with(['doctors' , 'services'])->findOrFail(id: $id));
     }
 
     public function getDoctors($id)
