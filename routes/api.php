@@ -236,17 +236,17 @@ Route::controller(ReportController::class)->prefix('reports')->group(function ()
 });
 
 Route::controller(ChatController::class)->prefix('chats')->group(function () {
-    Route::get('/', 'index');
-    Route::post('/', 'store');
-    Route::get('{id}', 'show');
+    Route::post('/', 'startChat');
+    Route::post('request', 'sendRequest');
+    Route::post('response', 'sendResponse');
     Route::put('{id}', 'update');
     Route::delete('{id}', 'destroy');
 });
 
 Route::controller(ServiceController::class)->prefix('services')->group(function () {
-    Route::post('/', 'startChat');
-    Route::post('/request', 'sendRequest');
-    Route::get('response', 'sendResponse');
+    Route::get('/', 'index');
+    Route::post('/', 'store');
+    Route::get('{id}', 'show');
     Route::put('{id}', 'update');
     Route::delete('{id}', 'destroy');
 });
