@@ -76,13 +76,15 @@ class AppointmentController extends Controller
 
 
     public function store(Request $request) {
+        $patient = Patient::firstWhere('user_id',auth()->id());
         $validated = $request->validate([
             'doctor_id' => 'required|exists:doctors,id',
-            'patient_id' => 'required|exists:patients,id',
+            //'patient_id' => 'required|exists:patients,id',
             'clinic_id' => 'required|exists:clinics,id',
             'date' => 'required|date',
             'status' => 'required'
         ]);
+        $validated['patient_id'] = $patient->id;
         $appointmentDate = \Carbon\Carbon::parse($request->date);
         $today = now()->startOfDay();
         $endDate = now()->addDays(10)->endOfDay();
