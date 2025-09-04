@@ -19,11 +19,15 @@ class AppointmentController extends Controller
     }
 
     public function getAllClinicAppointment(Request $request,$id) {
-         return response()->json(Appointment::with(['doctor','patient'])->where('clinic_id' , $id)->get()); 
+        $today = now()->startOfDay();
+        $endDate = now()->addDays(10)->endOfDay();
+         return response()->json(Appointment::with(['doctor','patient'])->where('clinic_id' , $id)->whereBetween('date', [$today, $endDate])->get()); 
     }
 
     public function getAllDoctorAppointment(Request $request,$id) {
-         return response()->json(Appointment::with(['doctor','patient'])->where('doctor_id' , $id)->get()); 
+        $today = now()->startOfDay();
+        $endDate = now()->addDays(10)->endOfDay();
+        return response()->json(Appointment::with(['doctor','patient'])->where('doctor_id' , $id)->whereBetween('date', [$today, $endDate])->get()); 
     }
 
     public function getClinicAppointmentInDate(Request $request,$id) {
@@ -46,6 +50,16 @@ class AppointmentController extends Controller
             'time' => 'required',
             'status' => 'required'
         ]);
+
+        $today = now()->startOfDay();
+        $endDate = now()->addDays(10)->endOfDay();
+        
+        if (!($request->date >= $today->toDateString() && $request->date <= $endDate->toDateString())) {
+            return response()->json([
+                'message' => 'The appointment date must be between today and the next 10 days.'
+            ], 400);
+        }
+
         $preAppointment = Appointment::where('date', $request->date)->where('time' , $request->time)->firstWhere('clinic_id',$request->clinic_id);
         if(!$preAppointment){
             return response()->json(Appointment::create($validated), 201);
