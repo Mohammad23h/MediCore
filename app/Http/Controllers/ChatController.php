@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Chat;
 use App\Models\Request as RequestModel;
 use App\Models\Response;
+use App\Models\Patient;
 use Carbon\Carbon;
 
 class ChatController extends Controller
@@ -14,7 +15,8 @@ class ChatController extends Controller
     public function startChat() {
         try {
         $chat = Chat::firstOrCreate([
-            'patient_id' => auth()->id(),
+            $patient = Patient::firstWhere('user_id',auth()->id());
+            'patient_id' => $patient->id,
             'center_id' => 1
         ]);
         return response()->json($chat, 201);
