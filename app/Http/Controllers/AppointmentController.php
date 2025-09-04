@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Clinic;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
@@ -42,6 +43,14 @@ class AppointmentController extends Controller
     public function getClinicAppointment($id) {
          return response()->json(Appointment::with(['doctor','patient'])->where('clinic_id', '==' , $id)->where('status' ,'!==', 'done')); 
     }
+
+    public function getMyAppointment() {
+        $patient = Patient::firstWhere('user_id', auth()->id());
+         return response()->json(Appointment::with(['doctor','patient'])->where('patient_id' , $patient->id)->get()); 
+    }
+
+
+
     public function store(Request $request) {
         $validated = $request->validate([
             'doctor_id' => 'required|exists:doctors,id',
@@ -94,6 +103,10 @@ class AppointmentController extends Controller
         return response()->json($appointment);
     }
     public function destroy($id) {
+        $appointment = Appointment::with('patient')->findOrFail($id);
+        if($appointment->patient->user_id !== auth()->id()){
+            return response()->json(['message' => 'unAuthorized'] , 403);
+        }
         Appointment::destroy($id);
         return response()->json(['message' => 'Deleted']);
     }

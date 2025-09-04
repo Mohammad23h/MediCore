@@ -9,6 +9,7 @@ use App\Models\Request as RequestModel;
 use App\Models\Response;
 use App\Models\Patient;
 use Carbon\Carbon;
+use Illuminate\Mail\Events\MessageSent;
 
 class ChatController extends Controller
 {
@@ -44,7 +45,7 @@ class ChatController extends Controller
 
             // يمكنك إطلاق Event لبث الرسالة مباشرة عبر Pusher
             broadcast(new NewMessage($chat->id, $requestModel))->toOthers();
-
+            //event(new MessageSent($requestModel));
             return response()->json($requestModel, 201);
             }
             catch (\Exception $e) {
@@ -68,6 +69,7 @@ class ChatController extends Controller
         ]);
 
          broadcast(new NewMessage($chat->id, $response))->toOthers();
+        //event(new MessageSent($response));
 
         return response()->json($response, 201);
     }
