@@ -134,6 +134,19 @@ class DoctorController extends Controller
         return response()->json(['blocked_doctor' => $doctor ], 200);
     }
 
+    public function unBlock($id){
+        /*
+        if(auth()->user()->role != 'admin'){
+            return response()->json(['message' => 'unauthorize'] , 403);
+        }
+            */
+        $doctor = Doctor::with('user')->findOrFail($id);
+        $user = $doctor->user;
+        $user->blocked = false;
+        $user->save();
+        return response()->json(['unBlocked_doctor' => $doctor ], 200);
+    }
+
 
 
 

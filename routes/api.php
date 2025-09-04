@@ -81,6 +81,7 @@ Route::post('/forgot-password', function (Request $request) {
 Route::middleware('auth:api')->get('/user-role', [AuthController::class, 'getRole']);
 Route::put('users/role', [AuthController::class,'giveRole']);
 Route::put('users/block/{id}', [AuthController::class,'block']);
+Route::put('users/unBlock/{id}', [AuthController::class,'unBlock']);
 
 
 Route::controller(LabTechnicianController::class)->prefix('lab-technicians')->group(function () {
@@ -171,6 +172,7 @@ Route::controller(DoctorController::class)->prefix('doctors')->group(function ()
     Route::post('{doctorId}/addServices', 'addService');
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
     Route::put('block/{id}', 'block');//->middleware(['auth:api', 'doctor']);
+    Route::put('unBlock/{id}', 'unBlock');
     
     //Route::delete('{id}', 'destroyMyProfile')->middleware(['auth:api', 'doctor']);
     
