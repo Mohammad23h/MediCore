@@ -1,43 +1,56 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Chat;
+use App\Events\NewMessage;
 use Illuminate\Http\Request;
+use App\Models\Chat;
+use App\Models\Request as RequestModel;
+use App\Models\Response;
+use Carbon\Carbon;
 
 class ChatController extends Controller
 {
-    public function index()
-    {
-        return response()->json(Chat::with(['sender', 'receiver'])->get());
+    // فتح محادثة جديدة بين المريض والمركز
+    public function startChat() {
+        $chat = Chat::firstOrCreate([
+            'patient_id' => auth()->id(),
+            'center_id' => 1
+        ]);
+        return response()->json($chat, 201);
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'sender_id' => 'required|exists:users,id',
-            'receiver_id' => 'required|exists:users,id',
-            'message' => 'required|string',
+    // إرسال ريكويست من المريض
+    public function sendRequest(Request $request, $chatId) {
+        $requestModel = RequestModel::create([
+            'chat_id' => $chatId,
+            'patient_id' => auth()->id(),
+            'content' => $request->content,
+            'sent_at' => Carbon::now(),
         ]);
 
-        return response()->json(Chat::create($validated), 201);
+        // يمكنك إطلاق Event لبث الرسالة مباشرة عبر Pusher
+         broadcast(new NewMessage($chatId, $requestModel))->toOthers();
+
+        return response()->json($requestModel, 201);
     }
 
-    public function show($id)
-    {
-        return response()->json(Chat::with(['sender', 'receiver'])->findOrFail($id));
+    // إرسال response من المركز
+    public function sendResponse(Request $request, $chatId) {
+        $response = Response::create([
+            'chat_id' => $chatId,
+            'center_id' => auth()->id(),
+            'content' => $request->content,
+            'sent_at' => Carbon::now(),
+        ]);
+
+         broadcast(new NewMessage($chatId, $response))->toOthers();
+
+        return response()->json($response, 201);
     }
 
-    public function update(Request $request, $id)
-    {
-        $chat = Chat::findOrFail($id);
-        $chat->update($request->all());
+    // جلب المحادثة مع جميع الرسائل
+    public function getChat($chatId) {
+        $chat = Chat::with(['requests','responses'])->findOrFail($chatId);
         return response()->json($chat);
-    }
-
-    public function destroy($id)
-    {
-        Chat::destroy($id);
-        return response()->json(['message' => 'Deleted']);
     }
 }
