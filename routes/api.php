@@ -181,6 +181,7 @@ Route::controller(DoctorController::class)->prefix('doctors')->group(function ()
 Route::controller(AppointmentController::class)->prefix('appointments')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store');
+    Route::get('myAppointments', 'getMyAppointment');
     Route::get('getByDate/{id}', 'getDoctorAppointmentInDate');
     Route::get('getByClinic/{id}', 'getAllClinicAppointment');
     Route::get('getByDoctor/{id}', 'getAllDoctorAppointment');
