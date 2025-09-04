@@ -45,8 +45,25 @@ class AppointmentController extends Controller
     }
 
     public function getMyAppointment() {
+        
         $patient = Patient::firstWhere('user_id', auth()->id());
-         return response()->json(Appointment::with(['doctor','patient'])->where('patient_id' , $patient->id)->get()); 
+         //return response()->json(Appointment::with(['doctor','patient'])->where('patient_id' , $patient->id)->get()); 
+
+         $appointments = Appointment::where('appointments.patient_id', $patient->id)
+        ->join('doctors', 'appointments.doctor_id', '=', 'doctors.id')
+        ->join('clinics', 'appointments.clinic_id', '=', 'clinics.id')
+        ->select(
+            'appointments.id',
+            'appointments.doctor_id',
+            'appointments.clinic_id',
+            'appointments.date',
+            'appointments.time',
+            'appointments.status',
+            'doctors.name as doctor_name',
+            'clinics.name as clinic_name'
+        )
+        ->get();
+        return response()->json($appointments , 200);
     }
 
 
