@@ -60,7 +60,7 @@ class AppointmentController extends Controller
             'appointments.time',
             'appointments.status',
             'doctors.name as doctor_name',
-            'clinics.name as clinic_name'
+            'clinics.title as clinic_name'
         )
         ->get();
         return response()->json($appointments , 200);
