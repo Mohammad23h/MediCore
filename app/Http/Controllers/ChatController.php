@@ -12,11 +12,18 @@ class ChatController extends Controller
 {
     // فتح محادثة جديدة بين المريض والمركز
     public function startChat() {
+        try {
         $chat = Chat::firstOrCreate([
             'patient_id' => auth()->id(),
             'center_id' => 1
         ]);
         return response()->json($chat, 201);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Server Error',
+            'error' => $e->getMessage()
+        ], 500);
+    }
     }
 
     // إرسال ريكويست من المريض
