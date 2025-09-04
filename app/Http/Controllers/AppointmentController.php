@@ -50,11 +50,11 @@ class AppointmentController extends Controller
             'date' => 'required|date',
             'status' => 'required'
         ]);
-
+        $appointmentDate = \Carbon\Carbon::parse($request->date);
         $today = now()->startOfDay();
         $endDate = now()->addDays(10)->endOfDay();
 
-        if (!($request->date >= $today->toDateString() && $request->date <= $endDate->toDateString())) {
+        if (!($appointmentDate >= $today->toDateString() && $appointmentDate <= $endDate->toDateString())) {
             return response()->json([
                 "message" => "The appointment date must be between $today and $endDate ."
             ], 400);
