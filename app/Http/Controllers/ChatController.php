@@ -32,19 +32,28 @@ class ChatController extends Controller
 
     // إرسال ريكويست من المريض
     public function sendRequest(Request $request) {
-        $patient = Patient::firstWhere('user_id',auth()->id());
-        $chat = Chat::firstWhere('patient_id',$patient->id);
-        $requestModel = RequestModel::create([
-            'chat_id' => $chat->id,
-            'patient_id' => $patient->id,
-            'content' => $request->content,
-            'sent_at' => Carbon::now(),
-        ]);
+        try{
+            $patient = Patient::firstWhere('user_id',auth()->id());
+            $chat = Chat::firstWhere('patient_id',$patient->id);
+            $requestModel = RequestModel::create([
+                'chat_id' => $chat->id,
+                'patient_id' => $patient->id,
+                'content' => $request->content,
+                'sent_at' => now(),
+            ]);
 
-        // يمكنك إطلاق Event لبث الرسالة مباشرة عبر Pusher
-         broadcast(new NewMessage($chat->id, $requestModel))->toOthers();
+            // يمكنك إطلاق Event لبث الرسالة مباشرة عبر Pusher
+            broadcast(new NewMessage($chat->id, $requestModel))->toOthers();
 
-        return response()->json($requestModel, 201);
+            return response()->json($requestModel, 201);
+            }
+            catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Server Error',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        
     }
 
     // إرسال response من المركز
@@ -55,7 +64,7 @@ class ChatController extends Controller
             'chat_id' => $chat->id,
             'center_id' => $center->id,
             'content' => $request->content,
-            'sent_at' => Carbon::now(),
+            'sent_at' => now(),
         ]);
 
          broadcast(new NewMessage($chat->id, $response))->toOthers();
