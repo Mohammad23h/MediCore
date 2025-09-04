@@ -9,6 +9,10 @@ class PatientController extends Controller
 {
     public function index() { return response()->json(Patient::all()->makeHidden('user_id')); }
     public function store(Request $request) {
+        $patient = Patient::firstWhere('user_id',auth()->id());
+        if($patient){
+            return response()->json([ 'message' => 'you have an account already'] , 400);
+        }
         $validated = $request->validate([
             'name' => 'required', 
             'phone' => 'nullable|numeric',
@@ -29,7 +33,18 @@ class PatientController extends Controller
     public function showMyProfile() { 
         return response()->json(Patient::with(['appointments'])->firstWhere('user_id',auth()->id())); 
     }
-    public function update(Request $request, $userId) {
+    public function update(Request $request, $id) {
+        $patient = Patient::findOrFail($id);
+
+        $Success = $patient->update($request->all());
+        if(!$Success){
+            return response()->json(['message' => 'Failed'],400);
+        }
+        return response()->json($patient , 200);
+    }
+
+    public function updateMyProfile(Request $request) {
+        $userId =  auth()->id();
         $patient = Patient::firstWhere('user_id', $userId);
         $Success = $patient->update($request->all());
         if(!$Success){
