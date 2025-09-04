@@ -48,7 +48,7 @@ class AppointmentController extends Controller
         
         $patient = Patient::firstWhere('user_id', auth()->id());
          //return response()->json(Appointment::with(['doctor','patient'])->where('patient_id' , $patient->id)->get()); 
-
+        try{
          $appointments = Appointment::where('appointments.patient_id', $patient->id)
         ->join('doctors', 'appointments.doctor_id', '=', 'doctors.id')
         ->join('clinics', 'appointments.clinic_id', '=', 'clinics.id')
@@ -64,6 +64,13 @@ class AppointmentController extends Controller
         )
         ->get();
         return response()->json($appointments , 200);
+        }
+        catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Server Error',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
     }
 
 
