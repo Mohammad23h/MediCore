@@ -56,7 +56,7 @@ class AppointmentController extends Controller
 
         if (!($request->date >= $today->toDateString() && $request->date <= $endDate->toDateString())) {
             return response()->json([
-                'message' => 'The appointment date must be between today and the next 10 days.'
+                "message" => "The appointment date must be between $today and $endDate ."
             ], 400);
         }
 
