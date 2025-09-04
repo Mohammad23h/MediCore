@@ -236,11 +236,11 @@ Route::controller(ReportController::class)->prefix('reports')->group(function ()
 });
 
 Route::controller(ChatController::class)->prefix('chats')->group(function () {
-    Route::post('/', 'startChat');
-    Route::post('request', 'sendRequest');
-    Route::post('response', 'sendResponse');
-    Route::put('{id}', 'update');
-    Route::delete('{id}', 'destroy');
+    Route::post('/', 'startChat')->middleware(['auth:api', 'inRoles:patient']);
+    Route::post('request', 'sendRequest')->middleware(['auth:api', 'inRoles:patient']);
+    Route::post('response', 'sendResponse')->middleware(['auth:api', 'inRoles:center']);
+    Route::get('{chatId}', 'getChat');
+    //Route::delete('{id}', 'destroy');
 });
 
 Route::controller(ServiceController::class)->prefix('services')->group(function () {
