@@ -9,7 +9,7 @@ class Request extends Model
 {
     use HasFactory;
 
-
+    protected $fillable = ['patient_id','chat_id','content','sent_at'];
 
 
 

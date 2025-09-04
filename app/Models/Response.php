@@ -9,7 +9,7 @@ class Response extends Model
 {
     use HasFactory;
 
-
+    protected $fillable = ['center_id','chat_id','content','sent_at'];
 
 
     public function center()
