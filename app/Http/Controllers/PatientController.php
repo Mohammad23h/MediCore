@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Storage;
 
 class PatientController extends Controller
 {
     public function index() { return response()->json(Patient::all()->makeHidden('user_id')); }
+/*
     public function store(Request $request) {
         $patient = Patient::firstWhere('user_id',auth()->id());
         if($patient){
@@ -27,6 +29,51 @@ class PatientController extends Controller
         $validated['registered_at'] = now();
         return response()->json(Patient::create($validated), 201);
     }
+*/
+public function store(Request $request)
+{
+    $patient = Patient::firstWhere('user_id', auth()->id());
+    if ($patient) {
+        return response()->json(['message' => 'you have an account already'], 400);
+    }
+
+    $validated = $request->validate([
+        'name'  => 'required',
+        'phone'  => 'nullable|numeric',
+        'gender'  => 'nullable',
+        'date_of_birth' => 'nullable|date',
+        'image' => 'nullable', // الصورة (ملف أو base64)
+        'blood_type' => 'string|nullable'
+    ]);
+
+    $validated['user_id'] = auth()->id();
+    $validated['registered_at'] = now();
+
+    // 🔹 معالجة الصورة (ملف أو base64)
+    if ($request->hasFile('image')) {
+    $path = $request->file('image')->store('uploads/patients', 'public');
+    $validated['image_url'] = asset('storage/'.$path);
+} elseif ($request->filled('image')) {
+    $imageData = $request->input('image');
+
+    if (strpos($imageData, 'base64,') !== false) {
+        $imageData = explode('base64,', $imageData)[1];
+    }
+
+    $imageData = base64_decode($imageData);
+    $fileName = uniqid() . '.png';
+    $path = "uploads/patients/{$fileName}";
+
+    Storage::disk('public')->put($path, $imageData);
+    $validated['image_url'] = asset('storage/'.$path);
+
+
+    }
+
+    return response()->json(Patient::create($validated), 201);
+}
+
+
     public function show($id) { 
         return response()->json(Patient::with(['appointments'])->findOrFail($id)); 
     }
