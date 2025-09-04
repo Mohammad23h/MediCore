@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patient;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
@@ -57,5 +58,14 @@ class PatientController extends Controller
     public function destroy($id) {
         Patient::destroy($id);
         return response()->json(['message' => 'Deleted']);
+    }
+
+    public function destroyMyProfile() {
+        $patient = Patient::firstWhere('user_id' , auth()->id());
+        $id = $patient->id;
+        Patient::destroy($id);
+        $userId  = auth()->id();
+        User::destroy($userId);
+        return response()->json(['message' => 'Your account and your profile has been deleted']);
     }
 }

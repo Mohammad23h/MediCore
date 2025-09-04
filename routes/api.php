@@ -154,9 +154,10 @@ Route::controller(PatientController::class)->prefix('patients')->group(function 
     Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'inRoles:patient']);
     Route::post('/', 'store')->middleware(['auth:api', 'inRoles:patient']);
     Route::put('/', 'updateMyProfile')->middleware(['auth:api', 'inRoles:patient']);
+    Route::delete('/', 'destroyMyProfile')->middleware(['auth:api', 'inRoles:patient']);
     Route::get('{id}', 'show')->middleware(['auth:api', 'inRoles:doctor,center,assistant']);
     Route::put('{id}', 'update')->middleware(['auth:api', 'inRoles:doctor,center,assistant']);
-    Route::delete('{id}', 'destroy');
+    Route::delete('{id}', 'destroy')->middleware(['auth:api', 'inRoles:admin']);
 });
 
 Route::controller(DoctorController::class)->prefix('doctors')->group(function () {
