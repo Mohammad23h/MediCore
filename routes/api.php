@@ -244,9 +244,9 @@ Route::controller(ChatController::class)->prefix('chats')->group(function () {
 });
 
 Route::controller(ServiceController::class)->prefix('services')->group(function () {
-    Route::get('/', 'index');
-    Route::post('/', 'store');
-    Route::get('{id}', 'show');
+    Route::post('/', 'startChat');
+    Route::post('/request', 'sendRequest');
+    Route::get('response', 'sendResponse');
     Route::put('{id}', 'update');
     Route::delete('{id}', 'destroy');
 });
