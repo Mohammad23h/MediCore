@@ -14,11 +14,12 @@ class ChatController extends Controller
     // فتح محادثة جديدة بين المريض والمركز
     public function startChat() {
         try {
-        $chat = Chat::firstOrCreate([
+            
             $patient = Patient::firstWhere('user_id',auth()->id());
-            'patient_id' => $patient->id,
-            'center_id' => 1
-        ]);
+            $chat = Chat::firstOrCreate([
+                'patient_id' => $patient->id,
+                'center_id' => 1
+            ]);
         return response()->json($chat, 201);
     } catch (\Exception $e) {
         return response()->json([
