@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\Clinic;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
@@ -47,24 +48,37 @@ class AppointmentController extends Controller
             'patient_id' => 'required|exists:patients,id',
             'clinic_id' => 'required|exists:clinics,id',
             'date' => 'required|date',
-            'time' => 'required',
             'status' => 'required'
         ]);
 
         $today = now()->startOfDay();
         $endDate = now()->addDays(10)->endOfDay();
-        
+
         if (!($request->date >= $today->toDateString() && $request->date <= $endDate->toDateString())) {
             return response()->json([
                 'message' => 'The appointment date must be between today and the next 10 days.'
             ], 400);
         }
 
-        $preAppointment = Appointment::where('date', $request->date)->where('time' , $request->time)->firstWhere('clinic_id',$request->clinic_id);
-        if(!$preAppointment){
-            return response()->json(Appointment::create($validated), 201);
+        $clinic = Clinic::findOrFail($request->clinic_id);
+
+        $lastAppointment = Appointment::where('date', $request->date)
+            ->where('clinic_id', $request->clinic_id)->orderBy('time', 'desc')->first();
+
+        if ($lastAppointment) {
+            $newTime = \Carbon\Carbon::createFromFormat('H:i:s', $lastAppointment->time)->addMinutes(30)->format('H:i:s');
+        } else {
+            $newTime = $clinic->start_time; 
         }
-        return response()->json(['message' => 'this time had already selected'] , 400);
+        if ($newTime >= $clinic->end_time) {
+            return response()->json([
+                'message' => 'No available slots, clinic is closed at this time.'
+            ], 400);
+        }
+
+        $validated['time'] = $newTime;
+
+        return response()->json(Appointment::create($validated), 201);
     }
 
     public function show($id) {
