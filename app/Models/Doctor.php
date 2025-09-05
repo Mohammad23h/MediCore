@@ -26,6 +26,11 @@ class Doctor extends Model
     protected $casts = [
         'certificates' => 'array',
     ];
+
+    public function getCertificatesAttribute($value)
+    {
+        return $value ? json_decode($value, true) : [];
+    }
     /*
     protected $casts = [
         'services' => 'array',
