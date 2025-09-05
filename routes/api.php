@@ -256,10 +256,10 @@ Route::controller(ServiceController::class)->prefix('services')->group(function 
 
 
 Route::controller(LaboratoryController::class)->prefix('laboratories')->group(function () {
-    Route::get('/', 'index')->middleware(['auth:api', 'center']);
+    Route::get('/', 'index')//->middleware(['auth:api', 'center']);
     Route::post('/', 'store')->middleware(['auth:api', 'center']);
     Route::post('{laboratoryId}/addServices', 'addService');
-    Route::get('{id}', 'show')->middleware(['auth:api', 'center']);
+    Route::get('{id}', 'show')//->middleware(['auth:api', 'center']);
     Route::put('{id}', 'update')->middleware(['auth:api', 'center']);
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
 });
