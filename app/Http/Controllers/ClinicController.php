@@ -36,7 +36,7 @@ class ClinicController extends Controller
 
     public function getDoctors($id)
     {
-        return response()->json(Doctor::where('clinic_id',$id)->get());
+        return response()->json(Doctor::with('services')->where('clinic_id',$id)->get());
     }
 
     public function update(Request $request, $id)

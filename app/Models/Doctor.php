@@ -19,10 +19,13 @@ class Doctor extends Model
     'start_time',
     'end_time',
     'clinic_id',
-    'specialty'
-    //'services'
+    'specialty',
+    'certificates', 
     ];
 
+    protected $casts = [
+        'certificates' => 'array',
+    ];
     /*
     protected $casts = [
         'services' => 'array',

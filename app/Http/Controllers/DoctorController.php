@@ -37,6 +37,29 @@ class DoctorController extends Controller
         return response()->json(Doctor::create($validated), 201);
     }
 
+    public function addCertificates(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'certificates' => 'required|array',
+            'certificates.*' => 'string',
+        ]);
+
+        $doctor = Doctor::findOrFail($id);
+
+        $current = $doctor->certificates ?? [];
+        $merged = array_merge($current, $validated['certificates']);
+
+        $doctor->update([
+           'certificates' => $merged
+        ]);
+
+        return response()->json([
+            'message' => 'Certificates added successfully',
+            'certificates' => $doctor->certificates
+        ]);
+    }
+
+
         public function addService(Request $request, $doctorId)
     {
         $request->validate([
