@@ -16,6 +16,48 @@ class LabTestController extends Controller
     }
 
 
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'patient_id'   => 'required|exists:patients,id',
+        'assistant_id' => 'required|exists:assistants,id',
+        'test_type'    => 'required|string',
+        'pdf_file'     => 'nullable|file|mimes:pdf,jpg,png,jpeg|max:5120',
+        'test_date'    => 'required|date',
+        'lab_id'       => 'required|exists:laboratories,id',
+        'result'       => 'nullable|string',
+    ]);
+
+    $fileUrl = null;
+
+    if ($request->hasFile('pdf_file')) {
+        $file      = $request->file('pdf_file');
+        $fileName  = uniqid().'.'.$file->getClientOriginalExtension();
+        $file->move(public_path('lab_tests'), $fileName);
+
+        // يولّد رابط مباشر
+        $fileUrl = url('lab_tests/'.$fileName);
+    }
+
+    $labTest = LabTest::create([
+        'patient_id'   => $validated['patient_id'],
+        'assistant_id' => $validated['assistant_id'],
+        'test_type'    => $validated['test_type'],
+        'pdf_file_uri' => $fileUrl,
+        'test_date'    => $validated['test_date'],
+        'lab_id'       => $validated['lab_id'],
+        'result'       => $validated['result'] ?? null,
+    ]);
+
+    return response()->json([
+        'message' => 'Lab test saved successfully',
+        'data'    => $labTest
+    ], 201);
+}
+
+
+
+/*
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -49,7 +91,7 @@ class LabTestController extends Controller
         ], 201);
     }
 
-
+*/
 /*
 
     public function store(Request $request)
