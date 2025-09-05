@@ -170,6 +170,8 @@ Route::controller(DoctorController::class)->prefix('doctors')->group(function ()
     Route::get('{id}', 'show');
     Route::put('{id}', 'update')->middleware(['auth:api', 'doctor']);
     Route::post('{doctorId}/addServices', 'addService');
+    Route::post('{id}/certificates', 'addCertificates');
+
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
     Route::put('block/{id}', 'block');//->middleware(['auth:api', 'doctor']);
     Route::put('unBlock/{id}', 'unBlock');
