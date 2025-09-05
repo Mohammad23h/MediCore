@@ -6,6 +6,7 @@ use App\Models\LabTest;
 use Illuminate\Http\Request;
 use App\Models\Assistant;
 use App\Models\Patient;
+use Storage;
 
 class LabTestController extends Controller
 {
@@ -49,7 +50,7 @@ class LabTestController extends Controller
     }
 
 
-
+/*
 
     public function store(Request $request)
     {
@@ -71,7 +72,7 @@ class LabTestController extends Controller
         
         return response()->json(LabTest::create($validated), 201);
     }
-
+*/
     public function show($id)
     {
         return response()->json(LabTest::with(['patient', 'laboratory'])->findOrFail($id));
