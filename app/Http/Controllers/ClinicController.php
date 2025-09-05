@@ -10,7 +10,7 @@ class ClinicController extends Controller
 {
     public function index()
     {
-        return response()->json(Clinic::all());
+        return response()->json(Clinic::with('services')->get());
     }
 
     public function store(Request $request)
