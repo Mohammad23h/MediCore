@@ -29,7 +29,67 @@ class PatientController extends Controller
         $validated['registered_at'] = now();
         return response()->json(Patient::create($validated), 201);
     }
-*/public function store(Request $request)
+*/
+
+
+public function store(Request $request)
+{
+    $patient = Patient::firstWhere('user_id', auth()->id());
+    if ($patient) {
+        return response()->json(['message' => 'you have an account already'], 400);
+    }
+
+    $validated = $request->validate([
+        'name'         => 'required',
+        'phone'        => 'nullable|numeric',
+        'gender'       => 'nullable',
+        'date_of_birth'=> 'nullable|date',
+        'image'        => 'nullable', // صورة ملف فقط
+        'blood_type'   => 'string|nullable'
+    ]);
+
+    $validated['user_id']       = auth()->id();
+    $validated['registered_at'] = now();
+
+    $imageUrl = null;
+
+    if ($request->hasFile('image')) {
+        $file     = $request->file('image');
+        $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('patients'), $fileName);
+
+        // 🔗 رابط مباشر للصورة
+        $imageUrl = url('patients/' . $fileName);
+        $validated['image_url'] = $imageUrl;
+    } elseif ($request->filled('image')) {
+        // 🔹 في حال إرسالها كـ base64
+        $imageData = $request->input('image');
+
+        if (strpos($imageData, 'base64,') !== false) {
+            $imageData = explode('base64,', $imageData)[1];
+        }
+
+        $imageData = base64_decode($imageData);
+        $fileName = uniqid() . '.png';
+        $path = "patients/{$fileName}";
+
+        Storage::disk('public')->put($path, $imageData);
+        $validated['image_url'] = asset('storage/' . $path);
+    }
+
+    
+
+    $patient = Patient::create($validated);
+
+    return response()->json([
+        'message' => 'Patient created successfully',
+        'data'    => $patient
+    ], 201);
+}
+
+
+/*
+public function store(Request $request)
 {
     $patient = Patient::firstWhere('user_id', auth()->id());
     if ($patient) {
@@ -74,7 +134,7 @@ class PatientController extends Controller
     return response()->json($patient, 201);
 }
 
-
+*/
     public function show($id) { 
         return response()->json(Patient::with(['appointments'])->findOrFail($id)); 
     }
