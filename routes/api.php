@@ -146,7 +146,7 @@ Route::controller(FeedbackController::class)->prefix('feedbacks')->group(functio
     Route::get('/reports', 'GetAllReports')->middleware(['auth:api', 'inRoles:center']);
     Route::post('/', 'store')->middleware(['auth:api']);
     Route::get('{id}', 'show')->middleware(['auth:api', 'inRoles:doctor,center,assistant']);
-    Route::put('{id}', 'update');
+    //Route::put('{id}', 'update');
     Route::delete('{id}', 'destroy');
 });
 
@@ -196,6 +196,7 @@ Route::controller(AppointmentController::class)->prefix('appointments')->group(f
 Route::controller(CenterController::class)->prefix('centers')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware(['auth:api', 'center']);
+    Route::post('updateImage', 'updateImage')->middleware(['auth:api', 'center']);
     Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'center']);
     Route::get('{id}', 'show');
     Route::put('{id}', 'update')->middleware(['auth:api', 'center']);
