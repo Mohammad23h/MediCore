@@ -87,6 +87,65 @@ public function store(Request $request)
 }
 
 
+
+public function updateImage(Request $request)
+{
+    $patient = Patient::firstWhere('user_id', auth()->id());
+    if (!$patient) {
+        return response()->json(['message' => 'Patient not found'], 404);
+    }
+
+    $request->validate([
+        'image' => 'required', // ملف أو base64
+    ]);
+
+    $imageUrl = null;
+
+    // 🧹 إذا عنده صورة قديمة نحذفها
+    if ($patient->image_url) {
+        $oldPath = public_path(parse_url($patient->image_url, PHP_URL_PATH));
+        if (file_exists($oldPath)) {
+            @unlink($oldPath);
+        }
+    }
+
+    // 🖼️ الحالة 1: رفع ملف
+    if ($request->hasFile('image')) {
+        $file     = $request->file('image');
+        $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('patients'), $fileName);
+
+        $imageUrl = url('patients/' . $fileName);
+
+    // 🖼️ الحالة 2: Base64
+    } else {
+        $imageData = $request->input('image');
+
+        if (strpos($imageData, 'base64,') !== false) {
+            $imageData = explode('base64,', $imageData)[1];
+        }
+
+        $imageData = base64_decode($imageData);
+
+        $fileName = uniqid() . '.png';
+        $filePath = public_path('patients/' . $fileName);
+
+        file_put_contents($filePath, $imageData);
+
+        $imageUrl = url('patients/' . $fileName);
+    }
+
+    // 📝 تحديث صورة المريض
+    $patient->update(['image_url' => $imageUrl]);
+
+    return response()->json([
+        'message'   => 'Image updated successfully',
+        'image_url' => $imageUrl
+    ], 200);
+}
+
+
+
 /*
 public function store(Request $request)
 {
