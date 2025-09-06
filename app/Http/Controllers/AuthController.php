@@ -76,9 +76,12 @@ class AuthController extends Controller
             $validator->validated() ,
              ['password' => bcrypt($request->get('password'))],
         ));
+        
+        $token = $user->createToken('api-token')->plainTextToken;
         return response()->json([
             'message' => 'Your account has registered sussessful',
             'User' => $user,
+            'access_token' => $token, 
         ]);
     }
 
