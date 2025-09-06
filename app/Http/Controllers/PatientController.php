@@ -60,9 +60,7 @@ public function store(Request $request)
 
         // 🔗 رابط مباشر للصورة
         $imageUrl = url('patients/' . $fileName);
-        $validated['image_url'] = $imageUrl;
     } elseif ($request->filled('image')) {
-        // 🔹 في حال إرسالها كـ base64
         $imageData = $request->input('image');
 
         if (strpos($imageData, 'base64,') !== false) {
@@ -70,15 +68,16 @@ public function store(Request $request)
         }
 
         $imageData = base64_decode($imageData);
-        $fileName = uniqid() . '.png';
-        $path = "patients/{$fileName}";
 
-        Storage::disk('public')->put($path, $imageData);
-        $validated['image_url'] = asset('storage/' . $path);
+        $fileName = uniqid() . '.png';
+        $filePath = public_path('patients/' . $fileName);
+
+        file_put_contents($filePath, $imageData);
+
+        $imageUrl = url('patients/' . $fileName);
     }
 
-    
-
+    $validated['image_url'] = $imageUrl;
     $patient = Patient::create($validated);
 
     return response()->json([
