@@ -104,15 +104,7 @@ class DoctorController extends Controller
             'clinic_id' => 'required|exists:clinics,id'
         ]);*/
 
-        $Success = $doctor->update([
-            'name' => $request->name,
-            'image_url' => $request->image_url,
-            'start_day' => $request->start_day,
-            'end_day' => $request->end_day,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'clinic_id' => $request->clinic_id
-        ]);/*Doctor::update(array_merge($request->all(), [ 'id' => $id]));*/
+        $Success = $doctor->update($request->all());/*Doctor::update(array_merge($request->all(), [ 'id' => $id]));*/
         
         if(!$Success){
             return response()->json(['message' => 'Failed'],400);
