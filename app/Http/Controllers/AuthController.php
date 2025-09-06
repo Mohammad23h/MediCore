@@ -76,8 +76,15 @@ class AuthController extends Controller
             $validator->validated() ,
              ['password' => bcrypt($request->get('password'))],
         ));
+
+        if (! $token = auth()->attempt([
+            'email' => $request->email,
+            'password' => $request->password,
+        ])) {
+            return response()->json(['error' => 'unauthurized'], 401);
+        }
         
-        $token = $user->createToken('api-token')->plainTextToken;
+        //$token = $user->createToken('api-token')->plainTextToken;
         return response()->json([
             'message' => 'Your account has registered sussessful',
             'User' => $user,
