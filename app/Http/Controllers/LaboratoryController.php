@@ -9,7 +9,7 @@ class LaboratoryController extends Controller
 {
     public function index()
     {
-        return response()->json(Laboratory::all());
+        return response()->json(Laboratory::with(['services'])->get());
     }
 
     public function store(Request $request)
@@ -30,7 +30,7 @@ class LaboratoryController extends Controller
 
     public function show($id)
     {
-        return response()->json(Laboratory::with(['center','technicians','services'])->findOrFail($id));
+        return response()->json(Laboratory::with(['services'])->findOrFail($id));
     }
 
     public function update(Request $request, $id)
