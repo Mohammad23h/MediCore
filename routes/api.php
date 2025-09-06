@@ -166,6 +166,7 @@ Route::controller(DoctorController::class)->prefix('doctors')->group(function ()
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware(['auth:api', 'doctor']);
     Route::post('upload', 'upload');
+    Route::post('updateImage', 'updateImage')->middleware(['auth:api', 'doctor']);
     Route::put('add-to-clinic', 'addToClinic')->middleware(['auth:api', 'center']);
     Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'doctor']);
     Route::get('{id}', 'show');

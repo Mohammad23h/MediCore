@@ -33,7 +33,33 @@ class DoctorController extends Controller
             //'user_id' => 'required|exists:users,id'
         ]);
         $validated['user_id'] = auth()->id();
-        $validated['image_url'] = $this->UploadImage($request,'doctors');
+        //$validated['image_url'] = $this->UploadImage($request,'doctors');
+        $imageUrl = null;
+        if($request->hasFile('image')) {
+            $file     = $request->file('image');
+            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('doctors'), $fileName);
+
+            $imageUrl = url('doctors/' . $fileName);
+
+        } else {
+            $imageData = $request->input('image');
+
+            if (strpos($imageData, 'base64,') !== false) {
+                $imageData = explode('base64,', $imageData)[1];
+            }
+
+            $imageData = base64_decode($imageData);
+
+            $fileName = uniqid() . '.png';
+            $filePath = public_path('doctors/' . $fileName);
+
+            file_put_contents($filePath, $imageData);
+
+            $imageUrl = url('doctors/' . $fileName);
+        }
+        $validated['image_url'] = $imageUrl;
+
         return response()->json(Doctor::create($validated), 201);
     }
 
@@ -88,22 +114,70 @@ class DoctorController extends Controller
         }
         return response()->json($doctor); 
     }
+
+public function updateImage(Request $request)
+{
+    $doctor = Doctor::firstWhere('user_id', auth()->id());
+    if (!$doctor) {
+        return response()->json(['message' => 'Patient not found'], 404);
+    }
+
+    $request->validate([
+        'image' => 'required', // ملف أو base64
+    ]);
+
+    $imageUrl = null;
+
+    // 🧹 إذا عنده صورة قديمة نحذفها
+    if ($doctor->image_url) {
+        $oldPath = public_path(parse_url($doctor->image_url, PHP_URL_PATH));
+        if (file_exists($oldPath)) {
+            @unlink($oldPath);
+        }
+    }
+
+    // 🖼️ الحالة 1: رفع ملف
+    if ($request->hasFile('image')) {
+        $file     = $request->file('image');
+        $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('doctors'), $fileName);
+
+        $imageUrl = url('doctors/' . $fileName);
+
+    // 🖼️ الحالة 2: Base64
+    } else {
+        $imageData = $request->input('image');
+
+        if (strpos($imageData, 'base64,') !== false) {
+            $imageData = explode('base64,', $imageData)[1];
+        }
+
+        $imageData = base64_decode($imageData);
+
+        $fileName = uniqid() . '.png';
+        $filePath = public_path('doctors/' . $fileName);
+
+        file_put_contents($filePath, $imageData);
+
+        $imageUrl = url('doctors/' . $fileName);
+    }
+
+    // 📝 تحديث صورة المريض
+    $doctor->update(['image_url' => $imageUrl]);
+
+    return response()->json([
+        'message'   => 'Image updated successfully',
+        'image_url' => $imageUrl
+    ], 200);
+}
+
+
+
     public function update(Request $request, $id) {
         $doctor = Doctor::findOrFail($id);
         if($doctor->user_id !== auth()->id()) {
             return response()->json(['message' => 'Access Denied '],403);
         }
-/*
-        $validated = $request->validate([
-            'name' => 'required',
-            'image_url' => 'string|url',
-            'start_day' => 'string',
-            'end_day' => 'string',
-            'start_time' => 'date_format:H:i',
-            'end_time' => 'date_format:H:i',
-            'clinic_id' => 'required|exists:clinics,id'
-        ]);*/
-
         $Success = $doctor->update($request->all());/*Doctor::update(array_merge($request->all(), [ 'id' => $id]));*/
         
         if(!$Success){
