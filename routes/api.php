@@ -197,7 +197,7 @@ Route::controller(AppointmentController::class)->prefix('appointments')->group(f
 Route::controller(CenterController::class)->prefix('centers')->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store')->middleware(['auth:api', 'center']);
-    Route::post('updateImage', 'updateImage')->middleware(['auth:api', 'center']);
+    Route::post('{centerId}/updateImage', 'updateImage')->middleware(['auth:api', 'center']);
     Route::get('myProfile', 'showMyProfile')->middleware(['auth:api', 'center']);
     Route::get('{id}', 'show');
     Route::put('{id}', 'update')->middleware(['auth:api', 'center']);
@@ -264,6 +264,7 @@ Route::controller(LaboratoryController::class)->prefix('laboratories')->group(fu
     Route::post('{laboratoryId}/addServices', 'addService');
     Route::get('{id}', 'show');//->middleware(['auth:api', 'center']);
     Route::put('{id}', 'update')->middleware(['auth:api', 'center']);
+
     Route::delete('{id}', 'destroy')->middleware(['auth:api', 'center']);
 });
 
