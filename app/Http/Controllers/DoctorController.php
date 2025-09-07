@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Doctor;
 use App\Traits\UploadImageTrait;
+use Exception;
 use Illuminate\Http\Request;
 
 class DoctorController extends Controller
@@ -20,7 +21,7 @@ class DoctorController extends Controller
     }
 
     public function store(Request $request) {
-
+        try{
         $validated = $request->validate([
             'name' => 'required',
             //'image_url' => 'string|url',
@@ -30,6 +31,7 @@ class DoctorController extends Controller
             'end_time' => 'date_format:H:i',
             //'clinic_id' => 'required|exists:clinics,id',
             'specialty' => 'required|string',
+            'image' => 'nullable'
             //'user_id' => 'required|exists:users,id'
         ]);
         $validated['user_id'] = auth()->id();
@@ -61,6 +63,12 @@ class DoctorController extends Controller
         $validated['image_url'] = $imageUrl;
 
         return response()->json(Doctor::create($validated), 201);
+    }catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Server Error',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
     }
 
     public function addCertificates(Request $request, $id)
