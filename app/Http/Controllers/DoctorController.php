@@ -20,6 +20,68 @@ class DoctorController extends Controller
         return $this->UploadImage($request,'doctors');
     }
 
+
+
+    public function store(Request $request) {
+    try {
+        $validated = $request->validate([
+            'name' => 'required',
+            'start_day' => 'string',
+            'end_day' => 'string',
+            'start_time' => 'date_format:H:i',
+            'end_time' => 'date_format:H:i',
+            'specialty' => 'required|string',
+            'image' => 'nullable'
+        ]);
+        $validated['user_id'] = auth()->id();
+
+        $imageUrl = null;
+
+        // المسار الذي نريد حفظ الصور فيه
+        $targetDir = public_path('doctors');
+
+        // الحل: التأكد من وجود المجلد وإنشائه إذا لم يكن موجوداً
+        if (!file_exists($targetDir)) {
+            mkdir($targetDir, 0777, true); // الوسيط true لإنشاء مجلدات متداخلة إذا لزم الأمر
+        }
+
+        if($request->hasFile('image')) {
+            $file     = $request->file('image');
+            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($targetDir, $fileName); // استخدم المتغير $targetDir هنا أيضاً
+            $imageUrl = url('doctors/' . $fileName);
+
+        } else {
+            $imageData = $request->input('image');
+
+            if ($imageData && strpos($imageData, 'base64,') !== false) {
+                $imageData = explode('base64,', $imageData)[1];
+            }
+
+            if ($imageData) {
+                $imageData = base64_decode($imageData);
+                $fileName = uniqid() . '.png';
+                $filePath = $targetDir . '/' . $fileName; // استخدم المتغير $targetDir هنا أيضاً
+
+                file_put_contents($filePath, $imageData);
+                $imageUrl = url('doctors/' . $fileName);
+            }
+        }
+        $validated['image_url'] = $imageUrl;
+
+        return response()->json(Doctor::create($validated), 201);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Server Error',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
+
+
+    /*
     public function store(Request $request) {
         try{
         $validated = $request->validate([
@@ -69,7 +131,7 @@ class DoctorController extends Controller
                     'error' => $e->getMessage()
                 ], 500);
             }
-    }
+    }*/
 
     public function addCertificates(Request $request, $id)
     {
