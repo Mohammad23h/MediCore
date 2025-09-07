@@ -20,14 +20,18 @@ public function store(Request $request)
 {
     $validated = $request->validate([
         'patient_id'   => 'required|exists:patients,id',
-        'assistant_id' => 'required|exists:assistants,id',
+        //'assistant_id' => 'required|exists:assistants,id',
         'test_type'    => 'required|string',
         'pdf_file'     => 'nullable|file|mimes:pdf,jpg,png,jpeg|max:5120',
         'test_date'    => 'required|date',
         'lab_id'       => 'required|exists:laboratories,id',
         'result'       => 'nullable|string',
     ]);
-
+    $assistant = Assistant::firstWhere('user_id', auth()->id());
+    if(!$assistant){
+        return response()->json(['message' => 'Assistant not Found'] , 400);
+    }
+    $validated['assistant_id'] = $assistant->id;
     $fileUrl = null;
 
     if ($request->hasFile('pdf_file')) {
