@@ -76,7 +76,76 @@ class CenterController extends Controller
     }
 
 
+public function updateImage(Request $request, $centerId)
+{
+    $center = Center::find($centerId);
+    if(!$center) {
+        return response()->json(['message' => 'Center not found'], 404);
+    }
 
+    $request->validate([
+        'image' => 'required', // ملف أو base64
+    ]);
+
+    $imageUrl = null;
+
+    // 1. تحديد المسار المستهدف وإنشاء المجلد إذا لم يكن موجوداً
+    $targetDir = public_path('centers');
+    if (!file_exists($targetDir)) {
+        mkdir($targetDir, 0777, true);
+    }
+
+    if($center->logo_url) {
+        $oldPath = public_path(parse_url($center->logo_url, PHP_URL_PATH));
+        if (file_exists($oldPath)) {
+            @unlink($oldPath);
+        }
+    }
+
+    if($request->hasFile('image')) {
+        $file     = $request->file('image');
+        $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+        $file->move($targetDir, $fileName); // استخدام المتغير $targetDir
+
+        $imageUrl = url('centers/' . $fileName);
+
+    } else {
+        $imageData = $request->input('image');
+
+        // تحقق إضافي من وجود البيانات
+        if (!$imageData) {
+            return response()->json(['message' => 'No image data provided'], 400);
+        }
+
+        if (strpos($imageData, 'base64,') !== false) {
+            $imageData = explode('base64,', $imageData)[1];
+        }
+
+        $imageData = base64_decode($imageData);
+
+        // تحقق إذا فشل فك التشفير
+        if ($imageData === false) {
+            return response()->json(['message' => 'Invalid base64 image data'], 400);
+        }
+
+        $fileName = uniqid() . '.png';
+        $filePath = $targetDir . '/' . $fileName; // استخدام المتغير $targetDir
+
+        file_put_contents($filePath, $imageData);
+
+        $imageUrl = url('centers/' . $fileName);
+    }
+
+    $center->update(['logo_url' => $imageUrl]);
+
+    return response()->json([
+        'message'   => 'Center image updated successfully',
+        'logo_url' => $imageUrl
+    ], 200);
+}
+
+
+/*
     public function updateImage(Request $request, $centerId)
     {
         $center = Center::find($centerId);
@@ -130,7 +199,7 @@ class CenterController extends Controller
     }
 
 
-
+*/
 
 
     public function update(Request $request, $id)
