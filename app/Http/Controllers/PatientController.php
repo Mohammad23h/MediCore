@@ -234,4 +234,36 @@ public function store(Request $request)
         User::destroy($userId);
         return response()->json(['message' => 'Your account and your profile has been deleted']);
     }
+
+
+
+        public function searchByName(Request $request)
+    {
+        try {
+            // التحقق من وجود معلمة البحث
+            $request->validate([
+                'name' => 'required|string|min:2|max:255'
+            ]);
+            
+            $searchTerm = $request->input('name');
+            
+            // البحث في قاعدة البيانات
+            $patients = Patient::where('name', 'LIKE', "%{$searchTerm}%")->get();
+            
+            return response()->json($patients, 200);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'errors' => $e->getMessage()
+            ], 422);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
