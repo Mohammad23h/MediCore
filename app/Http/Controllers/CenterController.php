@@ -78,6 +78,7 @@ class CenterController extends Controller
 
 public function updateImage(Request $request, $centerId)
 {
+    try{
     $center = Center::find($centerId);
     if(!$center) {
         return response()->json(['message' => 'Center not found'], 404);
@@ -142,6 +143,12 @@ public function updateImage(Request $request, $centerId)
         'message'   => 'Center image updated successfully',
         'logo_url' => $imageUrl
     ], 200);
+}catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Server Error',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
 }
 
 
