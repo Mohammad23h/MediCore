@@ -32,7 +32,7 @@ class CenterController extends Controller
         ]);
         $validated['user_id'] = auth()->id();
         //$validated['logo_url'] = $this->UploadImage($request,'Centers');
-        
+        $imageUrl = null;
         if($request->hasFile('image')) {
             $file     = $request->file('image');
             $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
