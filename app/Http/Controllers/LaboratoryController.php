@@ -43,6 +43,7 @@ class LaboratoryController extends Controller
         if(!$Success){
             return response()->json(['message' => 'Failed'],400);
         }
+        return response()->json(['message' => 'Succeeded']);
     }
 
     public function destroy($id)
