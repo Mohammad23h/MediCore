@@ -16,6 +16,10 @@ class CenterController extends Controller
 
     public function store(Request $request)
     {
+        $center = Center::firstWhere('user_id' , auth()->id());
+        if($center){
+            return response()->json(['message' => 'you have a center already'] , 400);
+        }
         $validated = $request->validate([
             'name' => 'required|string',
             //'logo_url' => 'string|url',
