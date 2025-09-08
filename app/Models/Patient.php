@@ -16,7 +16,12 @@ class Patient extends Model
     'gender',
     'date_of_birth' ,
     'blood_type',
-    'registered_at'
+    'registered_at',
+
+    
+    'height',
+    'weight',
+    'bmi'
     ];
 
 
@@ -72,4 +77,22 @@ class Patient extends Model
     {
         return $this->hasMany(Request::class);
     }
+
+
+    
+    public function HealthHabit()
+    {
+        return $this->hasOne(Health_Habit::class);
+    }
+
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class);
+    }
+
+    public function xrayimages()
+    {
+        return $this->hasMany(XrayImages::class);
+    }
+
 }

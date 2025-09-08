@@ -16,7 +16,12 @@ class MedicalRecord extends Model
         'assistant_id',
         'diagnosis',
         'notes',
-        'date'
+        'date',
+
+
+        'previous_diseases',
+        'surgeries',
+        'allergies',
     ];
 
 
